@@ -8,25 +8,26 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
-[Logback] (http://tony19.github.io/logback-android/)
-[JodaTime] (http://www.joda.org/joda-time/)
-[Google Guava] (https://code.google.com/p/guava-libraries/)
-[Google GSON] (https://code.google.com/p/google-gson/)
-[OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
+*[Logback] (http://tony19.github.io/logback-android/)
+*[JodaTime] (http://www.joda.org/joda-time/)
+*[Google Guava] (https://code.google.com/p/guava-libraries/)
+*[Google GSON] (https://code.google.com/p/google-gson/)
+*[OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
 
+*[Netflix RxJava] (https://github.com/Netflix/RxJava)
 
-[Netflix RxJava] (https://github.com/Netflix/RxJava)
+*[Square](http://square.github.io/otto/) - Otto EventBus - Similar to Guava EventBus
+*[Square OkHttp](http://square.github.io/okhttp/) - A better Http stack
+*[Square Picasso](http://square.github.io/picasso/) - Image Cache and Loader
+*[Square Retrofit](http://square.github.io/retrofit/) - REST Client (JAX-RS like)
 
-[Square Otto EventBus - Similar to Guava EventBus] (http://square.github.io/otto/)
-[Square OkHttp - A better Http stack] (http://square.github.io/okhttp/)
-[Square Picasso - Image Cache and Loader] (http://square.github.io/picasso/)
-[Square Retrofit - REST Client (JAX-RS like) ] (http://square.github.io/retrofit/)
+*[Robospice](https://github.com/stephanenicolas/robospice) - A Generic Service Management framework
+*[ButterKnife](http://jakewharton.github.io/butterknife/)  - View injection
+*[Dagger](http://square.github.io/dagger/) - Compile-time dependency injection
 
-[Robospice - A Generic Service Management framework] (https://github.com/stephanenicolas/robospice)
-
-[NineOldAndroids - Backport of Android 3.0 animation] (http://nineoldandroids.com/)
-[ListViewAnimations - ListView animations using NineOldAndroids] (https://github.com/nhaarman/ListViewAnimations/wiki)
-[SVG-Android - Forked branch of the unmaitained SVG-Android] (https://github.com/japgolly/svg-android)
+*[NineOldAndroids](http://nineoldandroids.com/) - Backport of Android 3.0 animation
+*[ListViewAnimations](https://github.com/nhaarman/ListViewAnimations/wiki) - ListView animations using NineOldAndroids
+*[SVG-Android](https://github.com/japgolly/svg-android) - Forked branch of the unmaitained SVG-Android
 
 IDE
 ---
