@@ -14,16 +14,13 @@ Technologies
 [Google GSON] (https://code.google.com/p/google-gson/)
 [OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
 [Netflix RxJava] (https://github.com/Netflix/RxJava)
-
 [Square](http://square.github.io/otto/) - Otto EventBus - Similar to Guava EventBus
 [Square OkHttp](http://square.github.io/okhttp/) - A better Http stack
 [Square Picasso](http://square.github.io/picasso/) - Image Cache and Loader
 [Square Retrofit](http://square.github.io/retrofit/) - REST Client (JAX-RS like)
-
 [Robospice](https://github.com/stephanenicolas/robospice) - A Generic Service Management framework
 [ButterKnife](http://jakewharton.github.io/butterknife/)  - View injection
 [Dagger](http://square.github.io/dagger/) - Compile-time dependency injection
-
 [NineOldAndroids](http://nineoldandroids.com/) - Backport of Android 3.0 animation
 [ListViewAnimations](https://github.com/nhaarman/ListViewAnimations/wiki) - ListView animations using NineOldAndroids
 [SVG-Android](https://github.com/japgolly/svg-android) - Forked branch of the unmaitained SVG-Android
