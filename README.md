@@ -8,25 +8,37 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
-[Logback] (http://tony19.github.io/logback-android/)
-[JodaTime] (http://www.joda.org/joda-time/)
-[Google Guava] (https://code.google.com/p/guava-libraries/)
-[Google GSON] (https://code.google.com/p/google-gson/)
-[OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
+[Logback](http://tony19.github.io/logback-android/)
 
+[JodaTime](http://www.joda.org/joda-time/)
 
-[Netflix RxJava] (https://github.com/Netflix/RxJava)
+[Google Guava](https://code.google.com/p/guava-libraries/)
 
-[Square Otto EventBus - Similar to Guava EventBus] (http://square.github.io/otto/)
-[Square OkHttp - A better Http stack] (http://square.github.io/okhttp/)
-[Square Picasso - Image Cache and Loader] (http://square.github.io/picasso/)
-[Square Retrofit - REST Client (JAX-RS like) ] (http://square.github.io/retrofit/)
+[Google GSON](https://code.google.com/p/google-gson/)
 
-[Robospice - A Generic Service Management framework] (https://github.com/stephanenicolas/robospice)
+[OAUTH SignPost - Wrapper for OAUTH signing](https://code.google.com/p/oauth-signpost/)
 
-[NineOldAndroids - Backport of Android 3.0 animation] (http://nineoldandroids.com/)
-[ListViewAnimations - ListView animations using NineOldAndroids] (https://github.com/nhaarman/ListViewAnimations/wiki)
-[SVG-Android - Forked branch of the unmaitained SVG-Android] (https://github.com/japgolly/svg-android)
+[Netflix RxJava - Reactive Java for Observables](https://github.com/Netflix/RxJava)
+
+[Square Otto EventBus - Similar to Guava EventBus](http://square.github.io/otto/)
+
+[Square OkHttp - A better HTTP stack](http://square.github.io/okhttp/)
+
+[Square Picasso - Image Cache and Loader](http://square.github.io/picasso/)
+
+[Square Retrofit - REST Client (JAX-RS like)](http://square.github.io/retrofit/)
+
+[Robospice - A Generic Service Management framework](https://github.com/stephanenicolas/robospice)
+
+[ButterKnife - View injection](http://jakewharton.github.io/butterknife/)
+
+[Dagger - Compile-time dependency injection](http://square.github.io/dagger/)
+
+[NineOldAndroids - Back port of Android 3.0 animation](http://nineoldandroids.com/)
+
+[ListViewAnimations - ListView animations using NineOldAndroids](https://github.com/nhaarman/ListViewAnimations/wiki)
+
+[SVG-Android - Forked branch of the unmaintained SVG-Android](https://github.com/japgolly/svg-android)
 
 IDE
 ---
