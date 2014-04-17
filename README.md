@@ -16,9 +16,9 @@ Technologies
 
 [Google GSON](https://code.google.com/p/google-gson/)
 
-[OAUTH SignPost](https://code.google.com/p/oauth-signpost/)
+[OAUTH SignPost - Wrapper for OAUTH signing](https://code.google.com/p/oauth-signpost/)
 
-[Netflix RxJava](https://github.com/Netflix/RxJava)
+[Netflix RxJava - Reactive Java for Observables](https://github.com/Netflix/RxJava)
 
 [Square Otto EventBus - Similar to Guava EventBus](http://square.github.io/otto/)
 
