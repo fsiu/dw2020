@@ -34,11 +34,11 @@ Technologies
 
 [Dagger - Compile-time dependency injection](http://square.github.io/dagger/)
 
-[NineOldAndroids - Backport of Android 3.0 animation](http://nineoldandroids.com/)
+[NineOldAndroids - Back port of Android 3.0 animation](http://nineoldandroids.com/)
 
 [ListViewAnimations - ListView animations using NineOldAndroids](https://github.com/nhaarman/ListViewAnimations/wiki)
 
-[SVG-Android - Forked branch of the unmaitained SVG-Android](https://github.com/japgolly/svg-android)
+[SVG-Android - Forked branch of the unmaintained SVG-Android](https://github.com/japgolly/svg-android)
 
 IDE
 ---
