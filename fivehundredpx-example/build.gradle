@@ -1,0 +1,90 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'android'
+
+def devBuildName = "dev"
+def releaseBuildName = "release"
+
+def profileRootSrc = projectDir.toString() + File.separator + "src" +File.separator + "main" + File.separator + "profiles"
+def devRootSrc = profileRootSrc + File.separator + devBuildName
+def releaseRootSrc = profileRootSrc + File.separator + releaseBuildName
+
+def resPath = File.separator + "res"
+def resourcesPath = File.separator + "resources"
+def assetsPath = File.separator + "assets"
+
+println devBuildName + " files at :" + devRootSrc
+println releaseBuildName + " files at :" + releaseRootSrc
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.1'
+
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            packageNameSuffix "."+devBuildName
+            versionNameSuffix "-"+devBuildName.toUpperCase()
+        }
+        release {
+            zipAlign true
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    sourceSets {
+        debug {
+            resources.srcDirs = [devRootSrc + resourcesPath]
+            res.srcDirs = [devRootSrc + resPath]
+            assets.srcDirs = [devRootSrc + assetsPath]
+        }
+        release {
+            resources.srcDirs = [releaseRootSrc + resourcesPath]
+            res.srcDirs = [releaseRootSrc + resPath]
+            assets.srcDirs = [devRootSrc + assetsPath]
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:+'
+
+    compile 'com.github.tony19:logback-android-classic:1.1.1-2'
+    compile 'org.slf4j:slf4j-api:1.7.6'
+
+    compile 'joda-time:joda-time:2.3'
+    compile 'com.google.guava:guava:16.0.1'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.squareup:otto:1.3.4'
+    compile 'com.netflix.rxjava:rxjava-core:0.16.1'
+    compile 'com.netflix.rxjava:rxjava-android:0.16.1'
+
+    compile 'oauth.signpost:signpost-core:1.2.1.2'
+    compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
+
+    compile 'com.squareup.okhttp:okhttp:1.5.0'
+    compile 'com.squareup.picasso:picasso:2.2.0'
+    compile 'com.squareup.retrofit:retrofit:1.5.0'
+    compile 'com.octo.android.robospice:robospice:1.4.11'
+    compile 'com.octo.android.robospice:robospice-retrofit:1.4.11'
+
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.nhaarman.listviewanimations:library:2.6.0'
+
+    compile 'com.jakewharton:butterknife:4.0.1'
+    compile 'com.squareup.dagger:dagger:1.2.1'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.1'
+}
