@@ -85,6 +85,7 @@ dependencies {
 
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.nhaarman.listviewanimations:library:2.6.0'
+    compile 'com.github.japgolly.android:svg-android:2.0.6'
 
     compile 'com.jakewharton:butterknife:4.0.1'
     compile 'com.squareup.dagger:dagger:1.2.1'
