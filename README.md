@@ -20,25 +20,25 @@ Technologies
 
 [Netflix RxJava](https://github.com/Netflix/RxJava)
 
-[Square](http://square.github.io/otto/) - Otto EventBus - Similar to Guava EventBus
+[Square Otto EventBus - Similar to Guava EventBus](http://square.github.io/otto/)
 
-[Square OkHttp](http://square.github.io/okhttp/) - A better Http stack
+[Square OkHttp - A better HTTP stack](http://square.github.io/okhttp/)
 
-[Square Picasso](http://square.github.io/picasso/) - Image Cache and Loader
+[Square Picasso - Image Cache and Loader](http://square.github.io/picasso/)
 
-[Square Retrofit](http://square.github.io/retrofit/) - REST Client (JAX-RS like)
+[Square Retrofit - REST Client (JAX-RS like)](http://square.github.io/retrofit/)
 
-[Robospice](https://github.com/stephanenicolas/robospice) - A Generic Service Management framework
+[Robospice - A Generic Service Management framework](https://github.com/stephanenicolas/robospice)
 
-[ButterKnife](http://jakewharton.github.io/butterknife/)  - View injection
+[ButterKnife - View injection](http://jakewharton.github.io/butterknife/)
 
-[Dagger](http://square.github.io/dagger/) - Compile-time dependency injection
+[Dagger - Compile-time dependency injection](http://square.github.io/dagger/)
 
-[NineOldAndroids](http://nineoldandroids.com/) - Backport of Android 3.0 animation
+[NineOldAndroids - Backport of Android 3.0 animation](http://nineoldandroids.com/)
 
-[ListViewAnimations](https://github.com/nhaarman/ListViewAnimations/wiki) - ListView animations using NineOldAndroids
+[ListViewAnimations - ListView animations using NineOldAndroids](https://github.com/nhaarman/ListViewAnimations/wiki)
 
-[SVG-Android](https://github.com/japgolly/svg-android) - Forked branch of the unmaitained SVG-Android
+[SVG-Android - Forked branch of the unmaitained SVG-Android](https://github.com/japgolly/svg-android)
 
 IDE
 ---
