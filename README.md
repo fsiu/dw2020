@@ -70,7 +70,7 @@ e.g.
 
 Command line install
 --------------------
-*./gradlew install<BuildType>
+* ./gradlew install<BuildType>
 
 e.g.  (Unplug/Re-plug device if it cannot see the device)
 ./gradlew installDebug

@@ -3,6 +3,7 @@ package com.eharmony.example;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.eharmony.example.model.FiveHundredPxPhoto;
@@ -27,6 +28,9 @@ import java.util.Properties;
 import com.eharmony.example.model.FiveHundredPxConfiguration;
 import com.eharmony.example.widgets.adapter.PhotoAdapter;
 import com.eharmony.example.widgets.listener.InfiniteScrollListener;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import se.akerfeldt.signpost.retrofit.RetrofitHttpOAuthConsumer;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
@@ -38,18 +42,21 @@ public class MainActivity extends BaseSpiceActivity  {
 
     private final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
 
-    ListView listView;
     ArrayAdapter<FiveHundredPxPhoto> listAdapter;
 
     private int page = 1;
     private int resultsPerPage = 75;
     private int maxPages;
 
+    @InjectView(R.id.list)ListView listView;
+    @InjectView(R.id.progress)ProgressBar progressBar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.listView = (ListView)findViewById(R.id.list);
+        ButterKnife.inject(this);
+
         this.listAdapter = new PhotoAdapter(this, new ArrayList<FiveHundredPxPhoto>());
 
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
@@ -150,7 +157,7 @@ public class MainActivity extends BaseSpiceActivity  {
         @Override
         public void onRequestSuccess(final FiveHundredPxPhotoContainer result) {
             if(isInitialLoad) {
-                findViewById(R.id.progress).setVisibility(View.GONE);
+                MainActivity.this.progressBar.setVisibility(View.GONE);
             }
             MainActivity.this.page++;
             MainActivity.this.maxPages = result.getTotalPages();

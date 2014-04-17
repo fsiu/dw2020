@@ -17,6 +17,9 @@ import com.eharmony.example.model.FiveHundredPxPhoto;
 
 import com.nhaarman.listviewanimations.ArrayAdapter;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by fsiu on 3/21/14.
  */
@@ -43,10 +46,7 @@ public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
         PhotoViewHolder viewHolder;
         if(convertView==null){
             convertView = this.inflater.inflate(R.layout.item, null);
-            viewHolder = new PhotoViewHolder();
-            viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image);
-            viewHolder.textView = (TextView)convertView.findViewById(R.id.text);
-            viewHolder.secondaryTextView = (TextView)convertView.findViewById(R.id.secondary_text);
+            viewHolder = new PhotoViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
         else {
@@ -71,9 +71,13 @@ public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
         textView.setText(text);
     }
 
-    private static final class PhotoViewHolder {
-        ImageView imageView;
-        TextView textView;
-        TextView secondaryTextView;
+    static final class PhotoViewHolder {
+        @InjectView(R.id.image)ImageView imageView;
+        @InjectView(R.id.text)TextView textView;
+        @InjectView(R.id.secondary_text) TextView secondaryTextView;
+
+        public PhotoViewHolder(final View view) {
+            ButterKnife.inject(this, view);
+        }
     }
 }
