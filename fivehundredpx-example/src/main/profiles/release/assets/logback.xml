@@ -1,0 +1,14 @@
+<configuration>
+    <!-- Create a file appender for a log in the application's data directory -->
+    <!-- Create a logcat appender -->
+    <appender name="logcat" class="ch.qos.logback.classic.android.LogcatAppender">
+        <encoder>
+            <pattern>%msg</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Write INFO (and higher-level) messages to the log file -->
+    <root level="WARN">
+        <appender-ref ref="file" />
+    </root>
+</configuration>

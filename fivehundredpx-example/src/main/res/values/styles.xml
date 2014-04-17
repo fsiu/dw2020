@@ -1,0 +1,24 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="photo_row_list">
+        <item name="android:padding">@dimen/list_item_padding</item>
+    </style>
+
+    <style name="main_text_row_item" parent="@style/text_row_item">
+        <item name="android:textSize">@dimen/main_description_size</item>
+    </style>
+
+    <style name="secondary_text_row_item" parent="@style/text_row_item">
+        <item name="android:textSize">@dimen/metadata_size</item>
+    </style>
+
+    <style name="text_row_item">
+        <item name="android:paddingBottom">@dimen/list_item_padding</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+    </style>
+
+</resources>
