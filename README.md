@@ -8,11 +8,11 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
-* [Logback] (http://tony19.github.io/logback-android/)
-* [JodaTime] (http://www.joda.org/joda-time/)
-* [Google Guava] (https://code.google.com/p/guava-libraries/)
-* [Google GSON] (https://code.google.com/p/google-gson/)
-* [OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
+[Logback] (http://tony19.github.io/logback-android/)
+[JodaTime] (http://www.joda.org/joda-time/)
+[Google Guava] (https://code.google.com/p/guava-libraries/)
+[Google GSON] (https://code.google.com/p/google-gson/)
+[OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
 
 * [Netflix RxJava] (https://github.com/Netflix/RxJava)
 
