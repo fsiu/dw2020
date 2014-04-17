@@ -13,7 +13,7 @@ Technologies
 [Google Guava] (https://code.google.com/p/guava-libraries/)
 [Google GSON] (https://code.google.com/p/google-gson/)
 [OAUTH SignPost] (https://code.google.com/p/oauth-signpost/)
-[Netflix RxJava] (https://github.com/Netflix/RxJava) - Reactive extensions for observables
+[Netflix RxJava] (https://github.com/Netflix/RxJava)
 
 [Square](http://square.github.io/otto/) - Otto EventBus - Similar to Guava EventBus
 [Square OkHttp](http://square.github.io/okhttp/) - A better Http stack
