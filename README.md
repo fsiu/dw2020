@@ -18,3 +18,21 @@ https://apigee.com/vova/embed/console/api500px
 
 1.  See secrets.properties to change it to your own account, it is set to a general mailinator test account.
 
+Build Types
+1.  Debug
+2.  Release
+
+Command line build
+1.  ./gradlew clean assemble<BuildType>
+
+e.g.
+./gradlew clean assembleDebug
+
+Command line install
+1.  ./gradlew install<BuildType>
+
+e.g.  (Unplug/Re-plug device if it cannot see the device)
+./gradlew installDebug
+
+
+
