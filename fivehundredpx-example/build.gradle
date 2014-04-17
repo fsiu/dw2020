@@ -73,9 +73,11 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.16.1'
 
     compile 'oauth.signpost:signpost-core:1.2.1.2'
-    compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
+    compile ('oauth.signpost:signpost-commonshttp4:1.2.1.2') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
 
-    compile 'com.squareup.okhttp:okhttp:1.5.0'
+    compile ('com.squareup.okhttp:okhttp:1.5.0')
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.squareup.retrofit:retrofit:1.5.0'
     compile 'com.octo.android.robospice:robospice:1.4.11'
