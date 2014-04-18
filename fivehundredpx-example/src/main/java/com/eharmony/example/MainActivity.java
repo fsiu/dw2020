@@ -6,13 +6,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ArrayAdapter;
 
 import com.eharmony.example.model.FiveHundredPxPhoto;
 import com.fivehundredpx.api.FiveHundredException;
 import com.fivehundredpx.api.auth.AccessToken;
 import com.fivehundredpx.api.tasks.XAuth500pxTask;
 
-import com.nhaarman.listviewanimations.ArrayAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
