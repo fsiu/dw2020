@@ -43,22 +43,7 @@ public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
 
     @Override
     public View getView(final int i, View convertView, final ViewGroup viewGroup) {
-        PhotoViewHolder viewHolder;
-        if(convertView==null){
-            convertView = this.inflater.inflate(R.layout.item, null);
-            viewHolder = new PhotoViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        }
-        else {
-            viewHolder = (PhotoViewHolder)convertView.getTag();
-        }
 
-        final FiveHundredPxPhoto photo = getItem(i);
-        Picasso.with(this.ctx)
-                .load(photo.getImageUrl())
-                .into(viewHolder.imageView);
-        setViewText(viewHolder.textView, photo.getName());
-        setViewText(viewHolder.secondaryTextView, photo.getShutterSpeed());
         return convertView;
     }
 
@@ -74,7 +59,6 @@ public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
     static final class PhotoViewHolder {
         @InjectView(R.id.image)ImageView imageView;
         @InjectView(R.id.text)TextView textView;
-        @InjectView(R.id.secondary_text) TextView secondaryTextView;
 
         public PhotoViewHolder(final View view) {
             ButterKnife.inject(this, view);

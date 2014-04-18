@@ -17,10 +17,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/main_text_row_item"/>
-
-    <TextView
-        android:id="@+id/secondary_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/secondary_text_row_item"/>
 </LinearLayout>

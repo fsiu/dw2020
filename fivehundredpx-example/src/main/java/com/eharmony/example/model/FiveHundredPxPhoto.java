@@ -20,9 +20,6 @@ public class FiveHundredPxPhoto {
     @SerializedName("image_url")
     private String imageUrl;
 
-    @SerializedName("shutter_speed")
-    private String shutterSpeed;
-
     private ArrayList<FiveHundredPxImageMetadata> images;
 
     public long getId() {
@@ -43,14 +40,6 @@ public class FiveHundredPxPhoto {
 
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public String getShutterSpeed() {
-        return shutterSpeed;
-    }
-
-    public void setShutterSpeed(String shutterSpeed) {
-        this.shutterSpeed = shutterSpeed;
     }
 
     public ArrayList<FiveHundredPxImageMetadata> getImages() {
