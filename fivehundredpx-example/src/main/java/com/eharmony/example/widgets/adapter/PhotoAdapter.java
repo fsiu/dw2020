@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
@@ -14,8 +15,6 @@ import java.util.ArrayList;
 
 import com.eharmony.example.R;
 import com.eharmony.example.model.FiveHundredPxPhoto;
-
-import com.nhaarman.listviewanimations.ArrayAdapter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -30,7 +29,7 @@ public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
 
     public PhotoAdapter(final Context ctx, final ArrayList<FiveHundredPxPhoto> items)
     {
-        super(items);
+        super(ctx, 0);
         this.ctx = ctx;
         this.inflater = (LayoutInflater) this.ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
