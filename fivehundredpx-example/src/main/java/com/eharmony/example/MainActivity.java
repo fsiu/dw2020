@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eharmony.example.model.FiveHundredPxPhoto;
@@ -31,6 +32,10 @@ import com.eharmony.example.widgets.listener.InfiniteScrollListener;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import se.akerfeldt.signpost.retrofit.RetrofitHttpOAuthConsumer;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
@@ -50,6 +55,7 @@ public class MainActivity extends BaseSpiceActivity  {
 
     @InjectView(R.id.list)ListView listView;
     @InjectView(R.id.progress)ProgressBar progressBar;
+    @InjectView(R.id.debug_text)TextView debugTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,14 +63,36 @@ public class MainActivity extends BaseSpiceActivity  {
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
-        this.listAdapter = new PhotoAdapter(this, new ArrayList<FiveHundredPxPhoto>());
+        final Observable<Boolean> observable = Observable.create(new Observable.OnSubscribe<Boolean>() {
 
-        final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
-        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-        swingBottomInAnimationAdapter.setAbsListView(this.listView);
-        this.listView.setAdapter(swingBottomInAnimationAdapter);
+            @Override
+            public void call(Subscriber<? super Boolean> observer) {
+                try {
+                    observer.onNext(initialize500pxProperties());
+                    observer.onCompleted();
+                } catch (Exception e) {
+                    observer.onError(e);
+                }
+            }
+        }).subscribeOn(Schedulers.io());
 
-        initialize500pxProperties();
+        observable.observeOn(Schedulers.io()).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                setupListView();
+                executeLoginTask();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, getString(R.string.oops), 5000);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -75,42 +103,58 @@ public class MainActivity extends BaseSpiceActivity  {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    private boolean initialize500pxProperties() throws Exception{
+        boolean result;
+        final Properties props = new Properties();
+
+        final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream(getString(R.string.properties_secrets_file_name));
+
+        try {
+            props.load(inputStream);
+            final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
+            fiveHundredPxConfiguration.setConsumerKey(props.getProperty(getString(R.string.properties_secrets_consumer_key_name)));
+            fiveHundredPxConfiguration.setConsumerSecret(props.getProperty(getString(R.string.properties_secrets_consumer_secret_name)));
+            fiveHundredPxConfiguration.setUsername(props.getProperty(getString(R.string.properties_secrets_username_name)));
+            fiveHundredPxConfiguration.setPassword(props.getProperty(getString(R.string.properties_secrets_password_name)));
+            result = true;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        return result;
+    }
+
+    /*
+    Arbitrary example where we need to integrate RxJava with an AsyncTask provided by a vendor
+     */
+    private void executeLoginTask() {
         XAuth500pxTask loginTask = new XAuth500pxTask(new XAuth500pxTaskDelegate());
         final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-
         loginTask.execute(fiveHundredPxConfiguration.getConsumerKey(),
                 fiveHundredPxConfiguration.getConsumerSecret(),
                 fiveHundredPxConfiguration.getUsername(),
                 fiveHundredPxConfiguration.getPassword());
     }
 
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-    }
-
-    private void initialize500pxProperties() {
-        final Properties props = new Properties();
-        final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties");
-        try {
-            props.load(inputStream);
-            final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-            fiveHundredPxConfiguration.setConsumerKey(props.getProperty("px_consumer_key"));
-            fiveHundredPxConfiguration.setConsumerSecret(props.getProperty("px_consumer_secret"));
-            fiveHundredPxConfiguration.setUsername(props.getProperty("username"));
-            fiveHundredPxConfiguration.setPassword(props.getProperty("password"));
-        }
-        catch (Exception e) {
-
-        }
+    private void setupListView() {
+        this.listAdapter = new PhotoAdapter(this, new ArrayList<FiveHundredPxPhoto>());
+        final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
+        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+        swingBottomInAnimationAdapter.setAbsListView(this.listView);
+        this.listView.setAdapter(swingBottomInAnimationAdapter);
     }
 
     private class XAuth500pxTaskDelegate implements XAuth500pxTask.Delegate {
 
         @Override
         public void onSuccess(AccessToken result) {
-
             final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
             final RetrofitHttpOAuthConsumer oAuthConsumer = new RetrofitHttpOAuthConsumer(fiveHundredPxConfiguration.getConsumerKey(), fiveHundredPxConfiguration.getConsumerSecret());
             oAuthConsumer.setTokenWithSecret(result.getToken(), result.getTokenSecret());
@@ -158,6 +202,7 @@ public class MainActivity extends BaseSpiceActivity  {
         public void onRequestSuccess(final FiveHundredPxPhotoContainer result) {
             if(isInitialLoad) {
                 MainActivity.this.progressBar.setVisibility(View.GONE);
+                MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
             }
             MainActivity.this.page++;
             MainActivity.this.maxPages = result.getTotalPages();
