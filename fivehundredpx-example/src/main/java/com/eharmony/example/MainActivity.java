@@ -2,6 +2,7 @@ package com.eharmony.example;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,6 +15,8 @@ import com.fivehundredpx.api.auth.AccessToken;
 import com.fivehundredpx.api.tasks.XAuth500pxTask;
 
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -149,6 +152,12 @@ public class MainActivity extends BaseSpiceActivity  {
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
         swingBottomInAnimationAdapter.setAbsListView(this.listView);
         this.listView.setAdapter(swingBottomInAnimationAdapter);
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
     }
 
     private class XAuth500pxTaskDelegate implements XAuth500pxTask.Delegate {
