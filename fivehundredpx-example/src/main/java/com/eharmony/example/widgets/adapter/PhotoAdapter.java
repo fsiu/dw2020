@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.ArrayAdapter;
 
 import com.google.common.base.Strings;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
