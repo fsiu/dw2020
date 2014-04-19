@@ -1,22 +1,21 @@
 package com.eharmony.example;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
 
-import com.eharmony.example.model.FiveHundredPxPhoto;
-import com.fivehundredpx.api.FiveHundredException;
+import com.eharmony.example.exception.AuthenticationError;
+import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
-import com.fivehundredpx.api.tasks.XAuth500pxTask;
 
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.ViewHelper;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.request.listener.RequestListener;
@@ -24,10 +23,6 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Properties;
 
 import com.eharmony.example.model.FiveHundredPxConfiguration;
 import com.eharmony.example.widgets.adapter.PhotoAdapter;
@@ -37,6 +32,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import se.akerfeldt.signpost.retrofit.RetrofitHttpOAuthConsumer;
@@ -50,11 +47,7 @@ public class MainActivity extends BaseSpiceActivity  {
 
     private final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
 
-    ArrayAdapter<FiveHundredPxPhoto> listAdapter;
-
-    private int page = 1;
-    private int resultsPerPage;
-    private int maxPages;
+    PhotoAdapter listAdapter;
 
     @InjectView(R.id.list)ListView listView;
     @InjectView(R.id.progress)ProgressBar progressBar;
@@ -65,37 +58,7 @@ public class MainActivity extends BaseSpiceActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-
-        final Observable<Boolean> observable = Observable.create(new Observable.OnSubscribe<Boolean>() {
-
-            @Override
-            public void call(Subscriber<? super Boolean> observer) {
-                try {
-                    observer.onNext(initialize500pxProperties());
-                    observer.onCompleted();
-                } catch (Exception e) {
-                    observer.onError(e);
-                }
-            }
-        }).subscribeOn(Schedulers.io());
-
-        observable.observeOn(Schedulers.io()).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(final Boolean answer) {
-                setupListView();
-                executeLoginTask();
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, getString(R.string.oops), Toast.LENGTH_LONG);
-                    }
-                });
-            }
-        });
+        startObservers();
     }
 
     @Override
@@ -113,113 +76,129 @@ public class MainActivity extends BaseSpiceActivity  {
         super.onStop();
     }
 
-    private boolean initialize500pxProperties() throws Exception{
-        boolean result;
-        final Properties props = new Properties();
+    private void startObservers() {
+        final Observable<BaseAdapter> observable = AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<BaseAdapter>() {
 
-        final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream(getString(R.string.properties_secrets_file_name));
+            @Override
+            public void call(Subscriber<? super BaseAdapter> observer) {
+                try {
+                    observer.onNext(setupFiveHundredPxAndAdapter());
+                    observer.onCompleted();
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                    observer.onError(e);
+                    observer.onCompleted();
+                }
+            }
+        }).subscribeOn(Schedulers.io()));
 
-        try {
-            props.load(inputStream);
-            final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-            fiveHundredPxConfiguration.setConsumerKey(props.getProperty(getString(R.string.properties_secrets_consumer_key_name)));
-            fiveHundredPxConfiguration.setConsumerSecret(props.getProperty(getString(R.string.properties_secrets_consumer_secret_name)));
-            fiveHundredPxConfiguration.setUsername(props.getProperty(getString(R.string.properties_secrets_username_name)));
-            fiveHundredPxConfiguration.setPassword(props.getProperty(getString(R.string.properties_secrets_password_name)));
-            result = true;
-        }
-        catch (Exception e) {
-            throw e;
-        }
-        return result;
+
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<BaseAdapter>() {
+            @Override
+            public void call(final BaseAdapter adapter) {
+                setupListView(adapter);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(R.string.oops);
+                builder.setMessage(throwable.getMessage());
+                builder.setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startObservers();
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+                builder.create().show();
+            }
+        });
     }
 
-    /*
-    Arbitrary example where we need to integrate RxJava with an AsyncTask provided by a vendor
-     */
-    private void executeLoginTask() {
-        XAuth500pxTask loginTask = new XAuth500pxTask(new XAuth500pxTaskDelegate());
+    private BaseAdapter setupFiveHundredPxAndAdapter() throws AuthenticationError {
         final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-        loginTask.execute(fiveHundredPxConfiguration.getConsumerKey(),
-                fiveHundredPxConfiguration.getConsumerSecret(),
-                fiveHundredPxConfiguration.getUsername(),
-                fiveHundredPxConfiguration.getPassword());
-    }
+        final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(fiveHundredPxConfiguration);
 
-    private void setupListView() {
-        this.resultsPerPage = getResources().getInteger(R.integer.results_per_page);
-        this.listAdapter = new PhotoAdapter(this, new ArrayList<FiveHundredPxPhoto>());
+        final RetrofitHttpOAuthConsumer oAuthConsumer = new RetrofitHttpOAuthConsumer(fiveHundredPxConfiguration.getConsumerKey(), fiveHundredPxConfiguration.getConsumerSecret());
+        oAuthConsumer.setTokenWithSecret(accessToken.getToken(), accessToken.getTokenSecret());
+        FiveHundredPxClient.INSTANCE.setConsumer(oAuthConsumer);
+        addToSpiceManager(MainActivity.class.getName(), new SpiceManager(FiveHundredPxSpiceService.class));
+
+        this.listAdapter = new PhotoAdapter(this);
+        this.listAdapter.setResultsPerPage(getResources().getInteger(R.integer.results_per_page));
+
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
         swingBottomInAnimationAdapter.setAbsListView(this.listView);
-        this.listView.setAdapter(swingBottomInAnimationAdapter);
+
+        return swingBottomInAnimationAdapter;
+    }
+
+    private void setupListView(final BaseAdapter adapter) {
+
+        // normally super.onStart() is managed from this.onStart() automatically
+        // but we have a unique case where we need to get the oAuthConsumer
+        // then add additional spice services
+        super.onStart();
+
+        this.listView.setAdapter(adapter);
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
             }
         });
+        this.listView.setOnScrollListener(new InfiniteScrollListener(this.listAdapter.getResultsPerPage()/2) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadMoreData(State.NEXT);
+            }
+        });
+        loadMoreData(State.INITIAL);
     }
 
-    private class XAuth500pxTaskDelegate implements XAuth500pxTask.Delegate {
-
-        @Override
-        public void onSuccess(AccessToken result) {
-            final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-            final RetrofitHttpOAuthConsumer oAuthConsumer = new RetrofitHttpOAuthConsumer(fiveHundredPxConfiguration.getConsumerKey(), fiveHundredPxConfiguration.getConsumerSecret());
-            oAuthConsumer.setTokenWithSecret(result.getToken(), result.getTokenSecret());
-            FiveHundredPxClient.INSTANCE.setConsumer(oAuthConsumer);
-            addToSpiceManager(MainActivity.class.getName(), new SpiceManager(FiveHundredPxSpiceService.class));
-
-            //normally super.onStart() is managed from this.onStart(), but we have a unique case where we need to get the oAuthConsumer, which should be cached after this
-            MainActivity.super.onStart();
-            MainActivity.this.listView.setOnScrollListener(new InfiniteScrollListener(resultsPerPage/2) {
-                @Override
-                public void onLoadMore(int page, int totalItemsCount) {
-                    loadMoreData(false);
-                }
-            });
-            loadMoreData(true);
-        }
-
-        @Override
-        public void onFail(FiveHundredException e) {
-            ;
-        }
-    }
-
-    public void loadMoreData(final boolean isInitialLoad) {
-        if(isInitialLoad || this.page<this.maxPages) {
-            final FiveHundredPxSpiceRequest request = new FiveHundredPxSpiceRequest(this.page, this.resultsPerPage);
-            getSpiceManager(MainActivity.class.getName()).execute(request, "test", DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(isInitialLoad));
+    public void loadMoreData(final State loadState) {
+        if(State.INITIAL == loadState || this.listAdapter.hasMorePages()) {
+            final FiveHundredPxSpiceRequest request = new FiveHundredPxSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
+            getSpiceManager(MainActivity.class.getName()).execute(request, "test", DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
         }
     }
 
     private class FiveHundredPxSpiceRequestListener implements RequestListener<FiveHundredPxPhotoContainer>{
 
-        final boolean isInitialLoad;
+        final State loadState;
 
-        public FiveHundredPxSpiceRequestListener(final boolean isInitialLoad){
-            this.isInitialLoad = isInitialLoad;
+        public FiveHundredPxSpiceRequestListener(final State loadState){
+            this.loadState = loadState;
         }
 
         @Override
-        public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(MainActivity.this, getString(R.string.oops), Toast.LENGTH_SHORT).show();
+        public void onRequestFailure(final SpiceException spiceException) {
+            LOGGER.error(spiceException.getMessage());
+            Toast.makeText(MainActivity.this, getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onRequestSuccess(final FiveHundredPxPhotoContainer result) {
-            if(isInitialLoad) {
+            if(State.INITIAL == loadState) {
                 MainActivity.this.progressBar.setVisibility(View.GONE);
                 MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
             }
-            MainActivity.this.page++;
-            MainActivity.this.maxPages = result.getTotalPages();
-
-            ArrayAdapter<FiveHundredPxPhoto> adapter = MainActivity.this.listAdapter;
+            final PhotoAdapter adapter = MainActivity.this.listAdapter;
+            adapter.setCurrentPage(adapter.getCurrentPage()+1);
+            adapter.setMaxPages(result.getTotalPages());
             adapter.addAll(result.getPhotos());
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private enum State {
+        INITIAL, NEXT;
     }
 }

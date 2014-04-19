@@ -1,5 +1,10 @@
 package com.eharmony.example.model;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
+
 /**
  * Created by fsiu on 4/17/14.
  */
@@ -42,4 +47,22 @@ public enum FiveHundredPxConfiguration {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    private FiveHundredPxConfiguration() {
+        final Properties props = new Properties();
+
+        final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties");
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        try {
+            props.load(reader);
+            setConsumerKey(props.getProperty("px_consumer_key"));
+            setConsumerSecret(props.getProperty("px_consumer_secret"));
+            setUsername(props.getProperty("username"));
+            setPassword(props.getProperty("password"));
+        }
+        catch (Exception e) {
+            //
+        }
+    }
+
 }

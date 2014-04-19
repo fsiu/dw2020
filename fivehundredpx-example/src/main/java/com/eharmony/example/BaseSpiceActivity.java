@@ -26,7 +26,9 @@ public abstract class BaseSpiceActivity extends Activity {
     @Override
     protected void onStop() {
         for(SpiceManager manager : spiceManagerMap.values()) {
-            manager.shouldStop();
+            if(manager.isStarted()) {
+                manager.shouldStop();
+            }
         }
         super.onStop();
     }
