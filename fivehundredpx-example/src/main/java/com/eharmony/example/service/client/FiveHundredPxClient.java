@@ -18,7 +18,4 @@ public enum FiveHundredPxClient {
     public SigningOkClient getClient() {
         return new SigningOkClient(this.oAuthConsumer);
     }
-
-
-
 }

@@ -53,7 +53,7 @@ public class MainActivity extends BaseSpiceActivity  {
     ArrayAdapter<FiveHundredPxPhoto> listAdapter;
 
     private int page = 1;
-    private int resultsPerPage = 75;
+    private int resultsPerPage;
     private int maxPages;
 
     @InjectView(R.id.list)ListView listView;
@@ -81,7 +81,7 @@ public class MainActivity extends BaseSpiceActivity  {
 
         observable.observeOn(Schedulers.io()).subscribe(new Action1<Boolean>() {
             @Override
-            public void call(Boolean aBoolean) {
+            public void call(final Boolean answer) {
                 setupListView();
                 executeLoginTask();
             }
@@ -91,7 +91,7 @@ public class MainActivity extends BaseSpiceActivity  {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, getString(R.string.oops), 5000);
+                        Toast.makeText(MainActivity.this, getString(R.string.oops), Toast.LENGTH_LONG);
                     }
                 });
             }
@@ -147,9 +147,10 @@ public class MainActivity extends BaseSpiceActivity  {
     }
 
     private void setupListView() {
+        this.resultsPerPage = getResources().getInteger(R.integer.results_per_page);
         this.listAdapter = new PhotoAdapter(this, new ArrayList<FiveHundredPxPhoto>());
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
-        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+        swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
         swingBottomInAnimationAdapter.setAbsListView(this.listView);
         this.listView.setAdapter(swingBottomInAnimationAdapter);
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -204,7 +205,7 @@ public class MainActivity extends BaseSpiceActivity  {
 
         @Override
         public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(MainActivity.this, "failure", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.oops), Toast.LENGTH_SHORT).show();
         }
 
         @Override
