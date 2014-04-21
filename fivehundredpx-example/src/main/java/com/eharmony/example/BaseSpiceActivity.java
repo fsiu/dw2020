@@ -9,7 +9,7 @@ import com.octo.android.robospice.SpiceManager;
 /**
  * Created by fsiu on 3/21/14.
  */
-public abstract class BaseSpiceActivity extends Activity {
+public abstract class BaseSpiceActivity extends BaseActivity {
 
     private HashMap<String, SpiceManager> spiceManagerMap = new HashMap<String, SpiceManager>();
 

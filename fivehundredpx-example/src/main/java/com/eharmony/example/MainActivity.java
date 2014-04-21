@@ -36,7 +36,6 @@ import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-import se.akerfeldt.signpost.retrofit.RetrofitHttpOAuthConsumer;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
 import com.eharmony.example.service.FiveHundredPxSpiceRequest;
@@ -58,7 +57,7 @@ public class MainActivity extends BaseSpiceActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        startObservers();
+        startObservables();
     }
 
     @Override
@@ -76,62 +75,111 @@ public class MainActivity extends BaseSpiceActivity  {
         super.onStop();
     }
 
-    private void startObservers() {
-        final Observable<BaseAdapter> observable = AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<BaseAdapter>() {
-
+    private Observable<BaseAdapter> getTokenObservable() {
+        return AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<BaseAdapter>() {
             @Override
-            public void call(Subscriber<? super BaseAdapter> observer) {
+            public void call(Subscriber<? super BaseAdapter> subscriber) {
                 try {
-                    observer.onNext(setupFiveHundredPxAndAdapter());
-                    observer.onCompleted();
+                    setupWebServices();
+                    subscriber.onNext(getNewListViewAdapter());
+                    subscriber.onCompleted();
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
-                    observer.onError(e);
-                    observer.onCompleted();
+                    subscriber.onError(e);
                 }
             }
         }).subscribeOn(Schedulers.io()));
+    }
 
+    private Observable<State> getSetupListViewObservable(final BaseAdapter adapter) {
+        return AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<State>() {
+            @Override
+            public void call(final Subscriber<? super State> subscriber) {
+                try {
+                    subscriber.onNext(addAdapterToListView(adapter));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread()));
+    }
+
+    private Action1<State> getLoadMoreDataAction() {
+        return new Action1<State>() {
+            @Override
+            public void call(final State state) {
+                loadMoreData(state);
+            }
+        };
+    }
+
+    @Override
+    public void startObservables() {
+        final Observable<BaseAdapter> observable = getTokenObservable();
 
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<BaseAdapter>() {
             @Override
             public void call(final BaseAdapter adapter) {
-                setupListView(adapter);
+                final Observable<State> stateObservable = getSetupListViewObservable(adapter);
+                stateObservable.observeOn(Schedulers.computation()).subscribe(getLoadMoreDataAction());
             }
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle(R.string.oops);
-                builder.setMessage(throwable.getMessage());
-                builder.setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        startObservers();
-                    }
-                });
-                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                });
-                builder.create().show();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.oops)
+                        .setMessage(throwable.getMessage())
+                        .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startObservables();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        }).create().show();
             }
         });
     }
 
-    private BaseAdapter setupFiveHundredPxAndAdapter() throws AuthenticationError {
-        final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
-        final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(fiveHundredPxConfiguration);
+    private void setupWebServices() throws AuthenticationError{
+        final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(FiveHundredPxConfiguration.INSTANCE);
+        FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
-        final RetrofitHttpOAuthConsumer oAuthConsumer = new RetrofitHttpOAuthConsumer(fiveHundredPxConfiguration.getConsumerKey(), fiveHundredPxConfiguration.getConsumerSecret());
-        oAuthConsumer.setTokenWithSecret(accessToken.getToken(), accessToken.getTokenSecret());
-        FiveHundredPxClient.INSTANCE.setConsumer(oAuthConsumer);
-        addToSpiceManager(MainActivity.class.getName(), new SpiceManager(FiveHundredPxSpiceService.class));
+        final SpiceManager spiceManager = new SpiceManager(FiveHundredPxSpiceService.class);
+        addToSpiceManager(MainActivity.class.getName(), spiceManager);
+        spiceManager.start(this);
+    }
 
+    private void setupListView() {
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+        this.listView.setOnScrollListener(new InfiniteScrollListener(this.listAdapter.getResultsPerPage()/2) {
+
+            final Observable observable = Observable.just(State.NEXT).subscribeOn(Schedulers.computation());
+            final Action1<State> action = getLoadMoreDataAction();
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                this.observable.subscribeOn(Schedulers.io()).subscribe(this.action);
+            }
+        });
+    }
+
+    private BaseAdapter getNewListViewAdapter() throws AuthenticationError {
         this.listAdapter = new PhotoAdapter(this);
         this.listAdapter.setResultsPerPage(getResources().getInteger(R.integer.results_per_page));
+
+        setupListView();
 
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
@@ -140,27 +188,9 @@ public class MainActivity extends BaseSpiceActivity  {
         return swingBottomInAnimationAdapter;
     }
 
-    private void setupListView(final BaseAdapter adapter) {
-
-        // normally super.onStart() is managed from this.onStart() automatically
-        // but we have a unique case where we need to get the oAuthConsumer
-        // then add additional spice services
-        super.onStart();
-
+    private State addAdapterToListView(final BaseAdapter adapter) {
         this.listView.setAdapter(adapter);
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
-        this.listView.setOnScrollListener(new InfiniteScrollListener(this.listAdapter.getResultsPerPage()/2) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                loadMoreData(State.NEXT);
-            }
-        });
-        loadMoreData(State.INITIAL);
+        return State.INITIAL;
     }
 
     public void loadMoreData(final State loadState) {
@@ -171,7 +201,6 @@ public class MainActivity extends BaseSpiceActivity  {
     }
 
     private class FiveHundredPxSpiceRequestListener implements RequestListener<FiveHundredPxPhotoContainer>{
-
         final State loadState;
 
         public FiveHundredPxSpiceRequestListener(final State loadState){
@@ -182,6 +211,7 @@ public class MainActivity extends BaseSpiceActivity  {
         public void onRequestFailure(final SpiceException spiceException) {
             LOGGER.error(spiceException.getMessage());
             Toast.makeText(MainActivity.this, getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
+            loadMoreData(loadState);
         }
 
         @Override
@@ -191,7 +221,7 @@ public class MainActivity extends BaseSpiceActivity  {
                 MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
             }
             final PhotoAdapter adapter = MainActivity.this.listAdapter;
-            adapter.setCurrentPage(adapter.getCurrentPage()+1);
+            adapter.incrementPage();
             adapter.setMaxPages(result.getTotalPages());
             adapter.addAll(result.getPhotos());
             adapter.notifyDataSetChanged();
@@ -199,6 +229,6 @@ public class MainActivity extends BaseSpiceActivity  {
     }
 
     private enum State {
-        INITIAL, NEXT;
+        INITIAL, NEXT
     }
 }

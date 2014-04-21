@@ -8,4 +8,6 @@
     <string name="cancel">Cancel</string>
     <string name="debug_placeholder">debug mode</string>
 
+    <string name="accessibility_image">image</string>
+
 </resources>

@@ -1,5 +1,8 @@
 package com.eharmony.example.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +13,8 @@ import java.util.Properties;
  */
 public enum FiveHundredPxConfiguration {
     INSTANCE;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(FiveHundredPxConfiguration.class);
 
     private String consumerKey;
     private String consumerSecret;
@@ -61,7 +66,7 @@ public enum FiveHundredPxConfiguration {
             setPassword(props.getProperty("password"));
         }
         catch (Exception e) {
-            //
+            LOGGER.error(e.getMessage());
         }
     }
 
