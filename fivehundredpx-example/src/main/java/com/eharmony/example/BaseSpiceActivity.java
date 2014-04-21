@@ -9,7 +9,7 @@ import com.octo.android.robospice.SpiceManager;
 /**
  * Created by fsiu on 3/21/14.
  */
-public abstract class BaseSpiceActivity extends Activity {
+public abstract class BaseSpiceActivity extends BaseActivity {
 
     private HashMap<String, SpiceManager> spiceManagerMap = new HashMap<String, SpiceManager>();
 
@@ -26,7 +26,9 @@ public abstract class BaseSpiceActivity extends Activity {
     @Override
     protected void onStop() {
         for(SpiceManager manager : spiceManagerMap.values()) {
-            manager.shouldStop();
+            if(manager.isStarted()) {
+                manager.shouldStop();
+            }
         }
         super.onStop();
     }

@@ -1,17 +1,12 @@
 package com.eharmony.example.widgets.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ArrayAdapter;
 
-import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 import com.eharmony.example.R;
 import com.eharmony.example.model.FiveHundredPxPhoto;
@@ -22,37 +17,16 @@ import butterknife.InjectView;
 /**
  * Created by fsiu on 3/21/14.
  */
-public class PhotoAdapter extends ArrayAdapter<FiveHundredPxPhoto>{
+public class PhotoAdapter extends NumericPaginationArrayAdapter<FiveHundredPxPhoto> {
 
-    final Context ctx;
-    final LayoutInflater inflater;
-
-    public PhotoAdapter(final Context ctx, final ArrayList<FiveHundredPxPhoto> items)
-    {
-        super(ctx, 0);
-        this.ctx = ctx;
-        this.inflater = (LayoutInflater) this.ctx
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @Override
-    public long getItemId(final int i) {
-        return 0;
+    public PhotoAdapter(final Context ctx) {
+        super(ctx);
     }
 
     @Override
     public View getView(final int i, View convertView, final ViewGroup viewGroup) {
 
         return convertView;
-    }
-
-    private void setViewText(final TextView textView, final String text) {
-        final boolean empty = Strings.isNullOrEmpty(text);
-        final int visibility = empty?View.GONE:View.VISIBLE;
-        if(textView.getVisibility()!=visibility) {
-            textView.setVisibility(visibility);
-        }
-        textView.setText(text);
     }
 
     static final class PhotoViewHolder {
