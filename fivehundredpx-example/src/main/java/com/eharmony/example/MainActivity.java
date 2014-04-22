@@ -11,11 +11,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eharmony.example.disruptor.factory.FiveHundredPxPhotoContainerFactory;
+import com.eharmony.example.disruptor.handler.FiveHundredPxPhotoContainerHandler;
+import com.eharmony.example.disruptor.translator.FiveHundredPxPhotoContainerProducerWithTranslator;
 import com.eharmony.example.exception.AuthenticationError;
 import com.eharmony.example.service.FiveHundredPxGsonSpiceService;
+import com.eharmony.example.service.FiveHundredPxJacksonSpiceService;
 import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -42,6 +50,9 @@ import com.eharmony.example.model.FiveHundredPxPhotoContainer;
 import com.eharmony.example.service.FiveHundredPxSpiceRequest;
 import com.eharmony.example.service.client.FiveHundredPxClient;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends BaseSpiceActivity {
 
     private final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
@@ -54,6 +65,8 @@ public class MainActivity extends BaseSpiceActivity {
     ProgressBar progressBar;
     @InjectView(R.id.debug_text)
     TextView debugTextView;
+
+    private FiveHundredPxPhotoContainerProducerWithTranslator producer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +82,7 @@ public class MainActivity extends BaseSpiceActivity {
             public void call(Subscriber<? super BaseAdapter> subscriber) {
                 try {
                     setupNetworkServices();
+                    setupDisruptors();
                     subscriber.onNext(getNewListViewAdapter());
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -134,11 +148,21 @@ public class MainActivity extends BaseSpiceActivity {
         );
     }
 
+    private void setupDisruptors() {
+        Executor executor = Executors.newSingleThreadExecutor();
+        FiveHundredPxPhotoContainerFactory factory = new FiveHundredPxPhotoContainerFactory();
+        int bufferSize = 4;
+        Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, executor, ProducerType.SINGLE, new BlockingWaitStrategy());
+        disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler());
+        disruptor.start();
+        this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(disruptor.getRingBuffer());
+    }
+
     private void setupNetworkServices() throws AuthenticationError {
         final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(FiveHundredPxConfiguration.INSTANCE);
         FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
-        final SpiceManager spiceManager = new SpiceManager(FiveHundredPxGsonSpiceService.class);
+        final SpiceManager spiceManager = new SpiceManager(FiveHundredPxJacksonSpiceService.class);
         addToSpiceManager(MainActivity.class.getName(), spiceManager);
         spiceManager.start(this);
     }
