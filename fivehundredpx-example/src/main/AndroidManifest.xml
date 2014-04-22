@@ -24,7 +24,10 @@
         </activity>
 
         <service
-            android:name="com.eharmony.example.service.FiveHundredPxSpiceService"
+            android:name=".service.FiveHundredPxGsonSpiceService"
+            android:exported="false" />
+        <service
+            android:name=".service.FiveHundredPxJacksonSpiceService"
             android:exported="false" />
     </application>
 

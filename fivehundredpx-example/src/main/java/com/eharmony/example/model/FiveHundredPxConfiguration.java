@@ -57,6 +57,7 @@ public enum FiveHundredPxConfiguration {
         final Properties props = new Properties();
 
         final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties");
+
         final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             props.load(reader);

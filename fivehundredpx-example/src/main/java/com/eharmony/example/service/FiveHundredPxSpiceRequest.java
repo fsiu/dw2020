@@ -9,6 +9,8 @@ import com.eharmony.example.model.FiveHundredPxPhotoContainer;
  */
 public class FiveHundredPxSpiceRequest extends RetrofitSpiceRequest<FiveHundredPxPhotoContainer, FiveHundredPx>{
 
+    public static final String CACHE_KEY = FiveHundredPxSpiceRequest.class.getName();
+
     private long page;
     private int resultPerPage;
 
