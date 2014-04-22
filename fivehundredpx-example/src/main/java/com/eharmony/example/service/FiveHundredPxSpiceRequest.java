@@ -9,10 +9,12 @@ import com.eharmony.example.model.FiveHundredPxPhotoContainer;
  */
 public class FiveHundredPxSpiceRequest extends RetrofitSpiceRequest<FiveHundredPxPhotoContainer, FiveHundredPx>{
 
-    private int page;
+    public static final String CACHE_KEY = FiveHundredPxSpiceRequest.class.getName();
+
+    private long page;
     private int resultPerPage;
 
-    public FiveHundredPxSpiceRequest(final int page, final int resultPerPage) {
+    public FiveHundredPxSpiceRequest(final long page, final int resultPerPage) {
         super(FiveHundredPxPhotoContainer.class, FiveHundredPx.class);
         this.page = page;
         this.resultPerPage = resultPerPage;

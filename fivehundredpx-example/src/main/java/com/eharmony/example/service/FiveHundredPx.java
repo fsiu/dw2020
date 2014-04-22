@@ -12,6 +12,6 @@ import retrofit.http.Query;
 public interface FiveHundredPx {
 
     @GET(UrlCatalog.FIVE_HUNDRED_PX_PHOTOS_URI)
-    FiveHundredPxPhotoContainer getPhotos(@Query("page") final int page, @Query("rpp")final int resultsPerPage);
+    FiveHundredPxPhotoContainer getPhotos(@Query("page") final long page, @Query("rpp")final int resultsPerPage);
 
 }

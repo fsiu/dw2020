@@ -2,13 +2,12 @@
 <resources>
     <string name="app_name">500px Example</string>
 
-    <string name="properties_secrets_file_name">secrets.properties</string>
-    <string name="properties_secrets_consumer_key_name">px_consumer_key</string>
-    <string name="properties_secrets_consumer_secret_name">px_consumer_secret</string>
-    <string name="properties_secrets_username_name">username</string>
-    <string name="properties_secrets_password_name">password</string>
-
-    <string name="oops">oops!</string>
+    <string name="oops">Oops!</string>
+    <string name="connection_failed">Unable to get connection</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
     <string name="debug_placeholder">debug mode</string>
+
+    <string name="accessibility_image">image</string>
 
 </resources>
