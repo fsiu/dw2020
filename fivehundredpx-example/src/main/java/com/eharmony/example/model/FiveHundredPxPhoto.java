@@ -2,6 +2,8 @@ package com.eharmony.example.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.ArrayList;
 
 /**
@@ -11,14 +13,20 @@ public class FiveHundredPxPhoto {
 
     private long id;
 
+    @JsonProperty("user_id")
     @SerializedName("user_id")
     private long userId;
 
     private String name;
     private String description;
 
+    @JsonProperty("image_url")
     @SerializedName("image_url")
     private String imageUrl;
+
+    @JsonProperty("shutter_speed")
+    @SerializedName("shutter_speed")
+    private String shutterSpeed;
 
     private ArrayList<FiveHundredPxImageMetadata> images;
 
