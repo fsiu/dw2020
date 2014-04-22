@@ -248,13 +248,9 @@ public class MainActivity extends BaseSpiceActivity {
             if (State.INITIAL == this.loadState) {
                 MainActivity.this.progressBar.setVisibility(View.GONE);
                 MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
-            }
-
-            if(MainActivity.this.state == State.INITIAL) {
-                MainActivity.this.progressBar.setVisibility(View.GONE);
-                MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
                 MainActivity.this.state = State.NEXT;
             }
+
             MainActivity.this.producer.onData(result);
         }
     }
