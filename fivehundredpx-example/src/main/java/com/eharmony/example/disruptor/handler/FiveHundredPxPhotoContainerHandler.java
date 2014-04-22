@@ -1,7 +1,6 @@
 package com.eharmony.example.disruptor.handler;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
 import com.eharmony.example.widgets.adapter.PhotoAdapter;

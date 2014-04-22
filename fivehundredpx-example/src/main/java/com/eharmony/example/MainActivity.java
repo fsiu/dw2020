@@ -89,9 +89,9 @@ public class MainActivity extends BaseSpiceActivity {
             public void call(Subscriber<? super BaseAdapter> subscriber) {
                 try {
                     setupNetworkServices();
-                    getNewListViewAdapter();
+                    final BaseAdapter baseAdapter = getNewListViewAdapter();
                     setupDisruptors();
-                    subscriber.onNext(MainActivity.this.listAdapter);
+                    subscriber.onNext(baseAdapter);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
@@ -259,7 +259,7 @@ public class MainActivity extends BaseSpiceActivity {
         }
     }
 
-    public enum State {
+    private enum State {
         INITIAL, NEXT
     }
 }
