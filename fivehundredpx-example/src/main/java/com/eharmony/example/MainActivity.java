@@ -166,7 +166,7 @@ public class MainActivity extends BaseSpiceActivity {
     private void setupDisruptors() {
         Executor executor = Executors.newSingleThreadExecutor();
         FiveHundredPxPhotoContainerFactory factory = new FiveHundredPxPhotoContainerFactory();
-        int bufferSize = 4;
+        int bufferSize = getResources().getInteger(R.integer.ring_buffer_size);
         Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, executor, ProducerType.SINGLE, new BlockingWaitStrategy());
         disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler(this.listAdapter, MainActivity.this.uiHandler));
         disruptor.start();
