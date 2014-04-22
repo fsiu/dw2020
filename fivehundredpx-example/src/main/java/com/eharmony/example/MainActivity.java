@@ -3,6 +3,8 @@ package com.eharmony.example;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -21,7 +23,6 @@ import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -66,13 +67,19 @@ public class MainActivity extends BaseSpiceActivity {
     @InjectView(R.id.debug_text)
     TextView debugTextView;
 
+    private Handler handler;
+    private Handler uiHandler;
+
     private FiveHundredPxPhotoContainerProducerWithTranslator producer;
+
+    private State state = State.INITIAL;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        this.uiHandler = new Handler();
         startObservables();
     }
 
@@ -82,8 +89,9 @@ public class MainActivity extends BaseSpiceActivity {
             public void call(Subscriber<? super BaseAdapter> subscriber) {
                 try {
                     setupNetworkServices();
+                    getNewListViewAdapter();
                     setupDisruptors();
-                    subscriber.onNext(getNewListViewAdapter());
+                    subscriber.onNext(MainActivity.this.listAdapter);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
@@ -97,6 +105,13 @@ public class MainActivity extends BaseSpiceActivity {
         return new Action1<BaseAdapter>() {
             @Override
             public void call(final BaseAdapter adapter) {
+                addAdapterToListView(adapter);
+                MainActivity.this.handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadMoreData(MainActivity.this.state);
+                    }
+                });
                 loadMoreData(addAdapterToListView(adapter));
             }
         };
@@ -153,9 +168,12 @@ public class MainActivity extends BaseSpiceActivity {
         FiveHundredPxPhotoContainerFactory factory = new FiveHundredPxPhotoContainerFactory();
         int bufferSize = 4;
         Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, executor, ProducerType.SINGLE, new BlockingWaitStrategy());
-        disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler());
+        disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler(this.listAdapter, MainActivity.this.uiHandler));
         disruptor.start();
         this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(disruptor.getRingBuffer());
+        final HandlerThread handlerThread = new HandlerThread("photo_retrieval_thread");
+        handlerThread.start();
+        this.handler = new Handler(handlerThread.getLooper());
     }
 
     private void setupNetworkServices() throws AuthenticationError {
@@ -174,12 +192,14 @@ public class MainActivity extends BaseSpiceActivity {
 
             }
         });
+
         this.listView.setOnScrollListener(new InfiniteScrollListener(scrollerItemThresholdForPreload) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 loadMoreData(State.NEXT);
             }
         });
+
     }
 
     private BaseAdapter getNewListViewAdapter() throws AuthenticationError {
@@ -205,7 +225,7 @@ public class MainActivity extends BaseSpiceActivity {
     public void loadMoreData(final State loadState) {
         if (State.INITIAL == loadState || this.listAdapter.hasMorePages()) {
             final FiveHundredPxSpiceRequest request = new FiveHundredPxSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
-            getSpiceManager(MainActivity.class.getName()).execute(request, FiveHundredPxSpiceRequest.CACHE_KEY, DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
+            getSpiceManager(MainActivity.class.getName()).execute(request, request, DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
         }
     }
 
@@ -229,15 +249,17 @@ public class MainActivity extends BaseSpiceActivity {
                 MainActivity.this.progressBar.setVisibility(View.GONE);
                 MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
             }
-            final PhotoAdapter adapter = MainActivity.this.listAdapter;
-            adapter.incrementPage();
-            adapter.setMaxPages(result.getTotalPages());
-            adapter.addAll(result.getPhotos());
-            adapter.notifyDataSetChanged();
+
+            if(MainActivity.this.state == State.INITIAL) {
+                MainActivity.this.progressBar.setVisibility(View.GONE);
+                MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
+                MainActivity.this.state = State.NEXT;
+            }
+            MainActivity.this.producer.onData(result);
         }
     }
 
-    private enum State {
+    public enum State {
         INITIAL, NEXT
     }
 }

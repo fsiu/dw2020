@@ -1,6 +1,10 @@
 package com.eharmony.example.disruptor.handler;
 
+import android.os.Handler;
+import android.util.Log;
+
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
+import com.eharmony.example.widgets.adapter.PhotoAdapter;
 import com.lmax.disruptor.EventHandler;
 
 /**
@@ -8,12 +12,25 @@ import com.lmax.disruptor.EventHandler;
  */
 public class FiveHundredPxPhotoContainerHandler implements EventHandler<FiveHundredPxPhotoContainer> {
 
-    public FiveHundredPxPhotoContainerHandler() {
+    private final PhotoAdapter photoAdapter;
+    private final Handler handler;
 
+    public FiveHundredPxPhotoContainerHandler(final PhotoAdapter photoAdapter, final Handler handler) {
+        this.photoAdapter = photoAdapter;
+        this.handler = handler;
     }
 
-    public void onEvent(FiveHundredPxPhotoContainer event, long sequence, boolean endOfBatch)
+    public void onEvent(final FiveHundredPxPhotoContainer event, long sequence, boolean endOfBatch)
     {
-        System.out.println("Event: " + event);
+        this.photoAdapter.incrementPage();
+        this.photoAdapter.setMaxPages(event.getTotalPages());
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                FiveHundredPxPhotoContainerHandler.this.photoAdapter.addAll(event.getPhotos());
+                FiveHundredPxPhotoContainerHandler.this.photoAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
