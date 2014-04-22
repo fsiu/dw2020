@@ -1,5 +1,6 @@
 package com.eharmony.example.widgets.adapter;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class PhotoAdapter extends NumericPaginationArrayAdapter<FiveHundredPxPho
         }
 
         final FiveHundredPxPhoto photo = getItem(i);
+
         Picasso.with(this.ctx)
                 .load(photo.getImageUrl())
                 .into(viewHolder.imageView);

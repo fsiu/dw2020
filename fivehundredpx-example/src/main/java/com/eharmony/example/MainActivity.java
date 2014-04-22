@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.eharmony.example.exception.AuthenticationError;
 import com.eharmony.example.service.FiveHundredPxGsonSpiceService;
+import com.eharmony.example.service.FiveHundredPxJacksonSpiceService;
 import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
@@ -138,7 +139,7 @@ public class MainActivity extends BaseSpiceActivity {
         final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(FiveHundredPxConfiguration.INSTANCE);
         FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
-        final SpiceManager spiceManager = new SpiceManager(FiveHundredPxGsonSpiceService.class);
+        final SpiceManager spiceManager = new SpiceManager(FiveHundredPxJacksonSpiceService.class);
         addToSpiceManager(MainActivity.class.getName(), spiceManager);
         spiceManager.start(this);
     }
@@ -181,7 +182,7 @@ public class MainActivity extends BaseSpiceActivity {
     public void loadMoreData(final State loadState) {
         if (State.INITIAL == loadState || this.listAdapter.hasMorePages()) {
             final FiveHundredPxSpiceRequest request = new FiveHundredPxSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
-            getSpiceManager(MainActivity.class.getName()).execute(request, FiveHundredPxSpiceRequest.CACHE_KEY, DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
+            getSpiceManager(MainActivity.class.getName()).execute(request, request, DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
         }
     }
 
