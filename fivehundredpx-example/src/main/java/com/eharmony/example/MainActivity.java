@@ -77,11 +77,25 @@ public class MainActivity extends BaseSpiceActivity {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         startObservables();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onPause();
+        if(this.disruptor!=null) {
+            this.disruptor.shutdown();
+        }
     }
 
     private Observable<BaseAdapter> getTokenObservable() {
@@ -167,6 +181,7 @@ public class MainActivity extends BaseSpiceActivity {
         final HandlerThread handlerThread = new HandlerThread("photo_retrieval_thread");
         handlerThread.start();
         this.backgroundHandler = new Handler(handlerThread.getLooper());
+
         MainActivity.this.backgroundHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -198,7 +213,6 @@ public class MainActivity extends BaseSpiceActivity {
                 loadMoreData(State.NEXT);
             }
         });
-
     }
 
     private BaseAdapter getNewListViewAdapter() throws AuthenticationError {
