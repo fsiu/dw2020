@@ -74,6 +74,8 @@ public class MainActivity extends BaseSpiceActivity {
 
     private State state = State.INITIAL;
 
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +114,6 @@ public class MainActivity extends BaseSpiceActivity {
                         loadMoreData(MainActivity.this.state);
                     }
                 });
-                loadMoreData(addAdapterToListView(adapter));
             }
         };
     }
@@ -144,7 +145,7 @@ public class MainActivity extends BaseSpiceActivity {
     public void startObservables() {
         getTokenObservable()
                 .retry(getResources().getInteger(R.integer.max_retries))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.executor(this.executor))
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
                 getInitialLoadMoreDataAction(),
                 getRetryDialogAction(
@@ -164,10 +165,9 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     private void setupDisruptors() {
-        Executor executor = Executors.newSingleThreadExecutor();
         FiveHundredPxPhotoContainerFactory factory = new FiveHundredPxPhotoContainerFactory();
         int bufferSize = getResources().getInteger(R.integer.ring_buffer_size);
-        Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, executor, ProducerType.SINGLE, new BlockingWaitStrategy());
+        Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, this.executor, ProducerType.SINGLE, new BlockingWaitStrategy());
         disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler(this.listAdapter, MainActivity.this.uiHandler));
         disruptor.start();
         this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(disruptor.getRingBuffer());
