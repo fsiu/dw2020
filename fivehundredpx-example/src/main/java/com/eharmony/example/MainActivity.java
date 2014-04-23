@@ -17,7 +17,6 @@ import com.eharmony.example.disruptor.factory.FiveHundredPxPhotoContainerFactory
 import com.eharmony.example.disruptor.handler.FiveHundredPxPhotoContainerHandler;
 import com.eharmony.example.disruptor.translator.FiveHundredPxPhotoContainerProducerWithTranslator;
 import com.eharmony.example.exception.AuthenticationError;
-import com.eharmony.example.service.FiveHundredPxGsonSpiceService;
 import com.eharmony.example.service.FiveHundredPxJacksonSpiceService;
 import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
@@ -67,8 +66,8 @@ public class MainActivity extends BaseSpiceActivity {
     @InjectView(R.id.debug_text)
     TextView debugTextView;
 
-    private Handler handler;
-    private Handler uiHandler;
+    private Handler backgroundHandler;
+    private final Handler uiHandler = new Handler();
 
     private Disruptor<FiveHundredPxPhotoContainer> disruptor;
     private FiveHundredPxPhotoContainerProducerWithTranslator producer;
@@ -82,7 +81,6 @@ public class MainActivity extends BaseSpiceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        this.uiHandler = new Handler();
         startObservables();
     }
 
@@ -168,8 +166,8 @@ public class MainActivity extends BaseSpiceActivity {
         this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(this.disruptor.getRingBuffer());
         final HandlerThread handlerThread = new HandlerThread("photo_retrieval_thread");
         handlerThread.start();
-        this.handler = new Handler(handlerThread.getLooper());
-        MainActivity.this.handler.post(new Runnable() {
+        this.backgroundHandler = new Handler(handlerThread.getLooper());
+        MainActivity.this.backgroundHandler.post(new Runnable() {
             @Override
             public void run() {
                 loadMoreData(MainActivity.this.state);
