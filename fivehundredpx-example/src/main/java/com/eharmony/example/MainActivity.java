@@ -70,6 +70,7 @@ public class MainActivity extends BaseSpiceActivity {
     private Handler handler;
     private Handler uiHandler;
 
+    private Disruptor<FiveHundredPxPhotoContainer> disruptor;
     private FiveHundredPxPhotoContainerProducerWithTranslator producer;
 
     private State state = State.INITIAL;
@@ -108,12 +109,7 @@ public class MainActivity extends BaseSpiceActivity {
             @Override
             public void call(final BaseAdapter adapter) {
                 addAdapterToListView(adapter);
-                MainActivity.this.handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadMoreData(MainActivity.this.state);
-                    }
-                });
+                MainActivity.this.disruptor.start();
             }
         };
     }
@@ -167,13 +163,18 @@ public class MainActivity extends BaseSpiceActivity {
     private void setupDisruptors() {
         FiveHundredPxPhotoContainerFactory factory = new FiveHundredPxPhotoContainerFactory();
         int bufferSize = getResources().getInteger(R.integer.ring_buffer_size);
-        Disruptor<FiveHundredPxPhotoContainer> disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, this.executor, ProducerType.SINGLE, new BlockingWaitStrategy());
-        disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler(this.listAdapter, MainActivity.this.uiHandler));
-        disruptor.start();
-        this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(disruptor.getRingBuffer());
+        this.disruptor = new Disruptor<FiveHundredPxPhotoContainer>(factory, bufferSize, this.executor, ProducerType.SINGLE, new BlockingWaitStrategy());
+        this.disruptor.handleEventsWith(new FiveHundredPxPhotoContainerHandler(this.listAdapter, MainActivity.this.uiHandler));
+        this.producer = new FiveHundredPxPhotoContainerProducerWithTranslator(this.disruptor.getRingBuffer());
         final HandlerThread handlerThread = new HandlerThread("photo_retrieval_thread");
         handlerThread.start();
         this.handler = new Handler(handlerThread.getLooper());
+        MainActivity.this.handler.post(new Runnable() {
+            @Override
+            public void run() {
+                loadMoreData(MainActivity.this.state);
+            }
+        });
     }
 
     private void setupNetworkServices() throws AuthenticationError {
