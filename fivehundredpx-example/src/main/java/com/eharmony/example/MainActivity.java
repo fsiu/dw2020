@@ -1,9 +1,7 @@
 package com.eharmony.example;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eharmony.example.exception.AuthenticationError;
-import com.eharmony.example.model.FiveHundredPxPhoto;
 import com.eharmony.example.service.FiveHundredPxJacksonSpiceService;
 import com.eharmony.example.service.FiveHundredPxSearchSpiceRequest;
 import com.eharmony.example.service.FiveHundredPxSpiceRequest;
@@ -45,8 +42,6 @@ import rx.schedulers.Schedulers;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
 import com.eharmony.example.service.client.FiveHundredPxClient;
-
-import java.util.Collection;
 
 public class MainActivity extends BaseSpiceActivity {
 
