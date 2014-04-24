@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/progress"
@@ -11,19 +11,19 @@
         android:layout_gravity="center"
         style="@android:style/Widget.Holo.ProgressBar.Large"/>
 
-    <ListView
+    <GridView
         android:id="@+id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scrollbars="none"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        style="@style/square_grid_item"/>
 
     <TextView
         android:id="@+id/debug_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="@string/debug_placeholder"
-        style="@style/debug_text"
-        />
+        style="@style/debug_text" />
 
 </merge>
