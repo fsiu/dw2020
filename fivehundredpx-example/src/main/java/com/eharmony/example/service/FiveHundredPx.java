@@ -14,4 +14,7 @@ public interface FiveHundredPx {
     @GET(UrlCatalog.FIVE_HUNDRED_PX_PHOTOS_URI)
     FiveHundredPxPhotoContainer getPhotos(@Query("page") final long page, @Query("rpp")final int resultsPerPage);
 
+    @GET(UrlCatalog.FIVE_HUNDRED_PX_PHOTOS_SEARCH_URI)
+    FiveHundredPxPhotoContainer getPhotos(@Query("term")final String term, @Query("tag") final String tag, @Query("page") final long page, @Query("rpp")final int resultsPerPage);
+
 }
