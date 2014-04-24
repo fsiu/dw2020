@@ -4,4 +4,5 @@
     <integer name="results_per_page">75</integer>
     <integer name="max_retries">3</integer>
     <integer name="ring_buffer_size">1</integer>
+    <integer name="square_grid_num_columns">2</integer>
 </resources>

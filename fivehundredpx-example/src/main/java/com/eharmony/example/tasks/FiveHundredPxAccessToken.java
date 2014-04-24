@@ -21,7 +21,7 @@ public class FiveHundredPxAccessToken {
                     .build();
             result = oauth.getAccessToken(new XAuthProvider(config.getUsername(), config.getPassword()));
         } catch (FiveHundredException fhe) {
-            throw new AuthenticationError();
+            throw new AuthenticationError(fhe);
         }
         return result;
     }

@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +18,8 @@ import com.eharmony.example.disruptor.handler.FiveHundredPxPhotoContainerHandler
 import com.eharmony.example.disruptor.translator.FiveHundredPxPhotoContainerProducerWithTranslator;
 import com.eharmony.example.exception.AuthenticationError;
 import com.eharmony.example.service.FiveHundredPxJacksonSpiceService;
+import com.eharmony.example.service.FiveHundredPxSearchSpiceRequest;
+import com.eharmony.example.service.FiveHundredPxSpiceRequest;
 import com.eharmony.example.tasks.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
@@ -47,7 +49,6 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import com.eharmony.example.model.FiveHundredPxPhotoContainer;
-import com.eharmony.example.service.FiveHundredPxSpiceRequest;
 import com.eharmony.example.service.client.FiveHundredPxClient;
 
 import java.util.concurrent.Executor;
@@ -60,7 +61,7 @@ public class MainActivity extends BaseSpiceActivity {
     private PhotoAdapter listAdapter;
 
     @InjectView(R.id.list)
-    ListView listView;
+    AbsListView listView;
     @InjectView(R.id.progress)
     ProgressBar progressBar;
     @InjectView(R.id.debug_text)
@@ -194,6 +195,7 @@ public class MainActivity extends BaseSpiceActivity {
         final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(FiveHundredPxConfiguration.INSTANCE);
         FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
+        //final SpiceManager spiceManager = new SpiceManager(FiveHundredPxGsonSpiceService.class);
         final SpiceManager spiceManager = new SpiceManager(FiveHundredPxJacksonSpiceService.class);
         addToSpiceManager(MainActivity.class.getName(), spiceManager);
         spiceManager.start(this);
@@ -231,14 +233,20 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     private State addAdapterToListView(final BaseAdapter adapter) {
-        this.listView.setAdapter(adapter);
+        ((AdapterView)this.listView).setAdapter(adapter);
         return State.INITIAL;
     }
 
     public void loadMoreData(final State loadState) {
         if (State.INITIAL == loadState || this.listAdapter.hasMorePages()) {
-            final FiveHundredPxSpiceRequest request = new FiveHundredPxSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
-            getSpiceManager(MainActivity.class.getName()).execute(request, request, DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
+            //final FiveHundredPxSpiceRequest request = new FiveHundredPxRecentPhotosSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
+            final FiveHundredPxSpiceRequest request = new FiveHundredPxSearchSpiceRequest(
+                    getString(R.string.default_search_term),
+                    getString(R.string.default_search_tag),
+                    this.listAdapter.getCurrentPage(),
+                    this.listAdapter.getResultsPerPage());
+
+            getSpiceManager(MainActivity.class.getName()).execute(request, request.getCacheKey(), DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
         }
     }
 
@@ -263,10 +271,13 @@ public class MainActivity extends BaseSpiceActivity {
                 MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
                 MainActivity.this.state = State.NEXT;
             }
-
             MainActivity.this.producer.onData(result);
         }
+
     }
+
+
+
 
     private enum State {
         INITIAL, NEXT
