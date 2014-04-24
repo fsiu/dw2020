@@ -3,4 +3,16 @@
 	<color name="image_background">#2E2E2E</color>
     <color name="debug_green">#8FB43E</color>
     <color name="debug_green_tint">#668FB43E</color>
+
+    <color name="eh_black_tint">#B3333333</color>
+    <color name="eh_black">#333333</color>
+    <color name="eh_light_grey">#CCCCCC</color>
+    <color name="eh_medium_light_grey">#999999</color>
+    <color name="eh_green">#8FB43E</color>
+    <color name="eh_light_blue">#ACE1F7</color>
+    <color name="eh_wine_red">#A12847</color>
+    <color name="eh_dark_blue">#185772</color>
+    <color name="eh_orange_yellow">#FBB024</color>
+    <color name="eh_green_tint">#668FB43E</color>
+
 </resources>

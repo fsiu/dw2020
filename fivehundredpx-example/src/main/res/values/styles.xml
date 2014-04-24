@@ -10,6 +10,9 @@
 
     <style name="main_text_row_item" parent="@style/text_row_item">
         <item name="android:textSize">@dimen/main_description_size</item>
+        <item name="android:background">@color/eh_black_tint</item>
+        <item name="android:textColor">@color/eh_light_grey</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="secondary_text_row_item" parent="@style/text_row_item">
@@ -17,8 +20,7 @@
     </style>
 
     <style name="text_row_item">
-        <item name="android:paddingBottom">@dimen/list_item_padding</item>
-        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
     <style name="debug_text" parent="@style/secondary_text_row_item">
@@ -26,6 +28,17 @@
         <item name="android:layout_gravity">top</item>
         <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:text">@string/debug_placeholder</item>
+    </style>
+
+
+    <style name="square_grid_item" parent="@style/grid_item">
+        <item name="android:numColumns">@integer/square_grid_num_columns</item>
+    </style>
+
+    <style name="grid_item">
+        <item name="android:horizontalSpacing">@dimen/grid_item_padding</item>
+        <item name="android:verticalSpacing">@dimen/grid_item_padding</item>
     </style>
 
 </resources>

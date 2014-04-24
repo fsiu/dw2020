@@ -8,6 +8,10 @@
     <string name="cancel">Cancel</string>
     <string name="debug_placeholder">debug mode</string>
 
+    <string name="default_search_term">akihabara</string>
+    <string name="default_search_tag">night</string>
+
+    <!-- Accessibility -->
     <string name="accessibility_image">image</string>
 
 </resources>
