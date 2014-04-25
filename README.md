@@ -8,38 +8,31 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
+The Boring
+----------
 [Logback](http://tony19.github.io/logback-android/)
-
 [JodaTime](http://www.joda.org/joda-time/)
-
 [Google Guava](https://code.google.com/p/guava-libraries/)
-
 [Google GSON](https://code.google.com/p/google-gson/)
-
+[JacksonJSON](http://wiki.fasterxml.com/JacksonHome)
 [OAUTH SignPost - Wrapper for OAUTH signing](https://code.google.com/p/oauth-signpost/)
+[Square OkHttp - A smart,better HTTP stack](http://square.github.io/okhttp/)
 
+The Fun
+-------
 [LMAX-Disruptor - High Performance Inter-thread Messaging Library](https://github.com/LMAX-Exchange/disruptor)
-
 [Netflix RxJava - Reactive Java for Observables](https://github.com/Netflix/RxJava)
-
 [Square Otto EventBus - Similar to Guava EventBus](http://square.github.io/otto/)
-
-[Square OkHttp - A better HTTP stack](http://square.github.io/okhttp/)
-
 [Square Picasso - Image Cache and Loader](http://square.github.io/picasso/)
-
 [Square Retrofit - REST Client (JAX-RS like)](http://square.github.io/retrofit/)
-
 [Robospice - A Generic Service Management framework](https://github.com/stephanenicolas/robospice)
-
 [ButterKnife - View injection](http://jakewharton.github.io/butterknife/)
-
 [Dagger - Compile-time dependency injection](http://square.github.io/dagger/)
 
+The Eye Candy
+-------------
 [NineOldAndroids - Back port of Android 3.0 animation](http://nineoldandroids.com/)
-
 [ListViewAnimations - ListView animations using NineOldAndroids](https://github.com/nhaarman/ListViewAnimations/wiki)
-
 [SVG-Android - Forked branch of the unmaintained SVG-Android](https://github.com/japgolly/svg-android)
 
 IDE
@@ -56,7 +49,8 @@ Android Studio
 500px Test console
 ------------------
 * [Test Console](https://apigee.com/vova/embed/console/api500px)
-* See secrets.properties to change it to your own account, it is set to a general mailinator test account.
+* See /secrets.properties.sample to change it to your own account.
+* Manually copy /secrets.properties.sample to /src/main/java/profiles/dev/resources/secrets.properties and /src/main/java/profiles/release/resources/secrets.properties
 
 Build Types
 -----------
