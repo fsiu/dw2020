@@ -1,10 +1,6 @@
 package net.darkwire.example.widgets.adapter;
 
 import android.content.Context;
-<<<<<<< HEAD:fivehundredpx-example/src/main/java/com/eharmony/example/widgets/adapter/PhotoAdapter.java
-=======
-import android.content.res.Resources;
->>>>>>> refactor-initial-import:fivehundredpx-example/src/main/java/net/darkwire/example/widgets/adapter/PhotoAdapter.java
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,13 +8,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-<<<<<<< HEAD:fivehundredpx-example/src/main/java/com/eharmony/example/widgets/adapter/PhotoAdapter.java
-import com.eharmony.example.R;
-import com.eharmony.example.model.FiveHundredPxPhoto;
-=======
+
 import net.darkwire.example.R;
 import net.darkwire.example.model.FiveHundredPxPhoto;
->>>>>>> refactor-initial-import:fivehundredpx-example/src/main/java/net/darkwire/example/widgets/adapter/PhotoAdapter.java
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -49,10 +41,6 @@ public class PhotoAdapter extends NumericPaginationArrayAdapter<FiveHundredPxPho
                 .load(photo.getImageUrl())
                 .into(viewHolder.imageView);
         setViewText(viewHolder.textView, photo.getName());
-<<<<<<< HEAD:fivehundredpx-example/src/main/java/com/eharmony/example/widgets/adapter/PhotoAdapter.java
-
-=======
->>>>>>> refactor-initial-import:fivehundredpx-example/src/main/java/net/darkwire/example/widgets/adapter/PhotoAdapter.java
         return convertView;
     }
 
