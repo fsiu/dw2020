@@ -22,7 +22,7 @@ The Boring
 
 [OAUTH SignPost - Wrapper for OAUTH signing](https://code.google.com/p/oauth-signpost/)
 
-[Square OkHttp - A smart,better HTTP stack](http://square.github.io/okhttp/)
+[Square OkHttp - A smarter, better HTTP stack](http://square.github.io/okhttp/)
 
 The Fun
 -------
