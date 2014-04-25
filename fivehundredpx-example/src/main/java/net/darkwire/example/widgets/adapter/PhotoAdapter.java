@@ -26,21 +26,7 @@ public class PhotoAdapter extends NumericPaginationArrayAdapter<FiveHundredPxPho
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup viewGroup) {
-        PhotoViewHolder viewHolder;
-        if(convertView==null){
-            convertView = this.inflater.inflate(R.layout.item, viewGroup, false);
-            viewHolder = new PhotoViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        }
-        else {
-            viewHolder = (PhotoViewHolder)convertView.getTag();
-        }
-
-        final FiveHundredPxPhoto photo = getItem(position);
-        Picasso.with(this.ctx)
-                .load(photo.getImageUrl())
-                .into(viewHolder.imageView);
-        setViewText(viewHolder.textView, photo.getName());
+        
         return convertView;
     }
 
