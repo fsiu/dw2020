@@ -8,6 +8,8 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
+The Boring
+----------
 [Logback](http://tony19.github.io/logback-android/)
 
 [JodaTime](http://www.joda.org/joda-time/)
@@ -16,15 +18,19 @@ Technologies
 
 [Google GSON](https://code.google.com/p/google-gson/)
 
+[JacksonJSON](http://wiki.fasterxml.com/JacksonHome)
+
 [OAUTH SignPost - Wrapper for OAUTH signing](https://code.google.com/p/oauth-signpost/)
 
+[Square OkHttp - A smart,better HTTP stack](http://square.github.io/okhttp/)
+
+The Fun
+-------
 [LMAX-Disruptor - High Performance Inter-thread Messaging Library](https://github.com/LMAX-Exchange/disruptor)
 
 [Netflix RxJava - Reactive Java for Observables](https://github.com/Netflix/RxJava)
 
 [Square Otto EventBus - Similar to Guava EventBus](http://square.github.io/otto/)
-
-[Square OkHttp - A better HTTP stack](http://square.github.io/okhttp/)
 
 [Square Picasso - Image Cache and Loader](http://square.github.io/picasso/)
 
@@ -36,6 +42,8 @@ Technologies
 
 [Dagger - Compile-time dependency injection](http://square.github.io/dagger/)
 
+The Eye Candy
+-------------
 [NineOldAndroids - Back port of Android 3.0 animation](http://nineoldandroids.com/)
 
 [ListViewAnimations - ListView animations using NineOldAndroids](https://github.com/nhaarman/ListViewAnimations/wiki)
@@ -56,13 +64,9 @@ Android Studio
 500px Test console
 ------------------
 * [Test Console](https://apigee.com/vova/embed/console/api500px)
-* See secrets.properties.sample and create a new secrets.properties for your account.
-* Copy secrets.properties to the following directories:
-
-src/main/java/profiles/dev/resources
-src/main/java/profiles/release/resources
-
-* The Application currently will "Force Quit" intentionally if this file is not there.
+* See /secrets.properties.sample to change it to your own account.
+* Manually copy /secrets.properties.sample to /src/main/java/profiles/dev/resources/secrets.properties and /src/main/java/profiles/release/resources/secrets.properties
+* This application will purposefully "Force Quit" if you don't have the file.
 
 Build Types
 -----------
@@ -82,6 +86,5 @@ Command line install
 
 e.g.  (Unplug/Re-plug device if it cannot see the device)
 ./gradlew installDebug
-
 
 
