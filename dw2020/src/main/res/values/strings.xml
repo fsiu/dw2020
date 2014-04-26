@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">500px Example</string>
+    <string name="app_name">dw2020</string>
 
     <string name="oops">Oops!</string>
     <string name="connection_failed">Unable to get connection</string>
