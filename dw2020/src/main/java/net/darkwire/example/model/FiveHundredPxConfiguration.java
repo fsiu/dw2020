@@ -1,9 +1,12 @@
 package net.darkwire.example.model;
 
+import com.google.common.io.Closeables;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -11,8 +14,8 @@ import java.util.Properties;
 /**
  * Created by fsiu on 4/17/14.
  */
-public enum FiveHundredPxConfiguration {
-    INSTANCE;
+public class FiveHundredPxConfiguration {
+    public static final FiveHundredPxConfiguration INSTANCE = new FiveHundredPxConfiguration();
 
     private final Logger LOGGER = LoggerFactory.getLogger(FiveHundredPxConfiguration.class);
 
@@ -58,16 +61,22 @@ public enum FiveHundredPxConfiguration {
 
         final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties");
 
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader reader = null;
         try {
+            reader = new BufferedReader(new InputStreamReader(inputStream));
             props.load(reader);
             setConsumerKey(props.getProperty("px_consumer_key"));
             setConsumerSecret(props.getProperty("px_consumer_secret"));
             setUsername(props.getProperty("username"));
             setPassword(props.getProperty("password"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
+        } finally {
+            try {
+                Closeables.close(reader, true);
+            } catch (IOException e) {
+                LOGGER.debug(e.getMessage());
+            }
         }
     }
 
