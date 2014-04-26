@@ -66,8 +66,8 @@ Android Studio
 * [Test Console](https://apigee.com/vova/embed/console/api500px)
 * See /dw2020/secrets.properties.sample to create your own secrets.properties file.
 * Copy your secrets.properties to :
-/src/main/java/profiles/dev/resources/secrets.properties
-/src/main/java/profiles/release/resources/secrets.properties
+/dw2020/src/main/java/profiles/dev/resources/secrets.properties
+/dw2020/src/main/java/profiles/release/resources/secrets.properties
 
 
 Build Types
