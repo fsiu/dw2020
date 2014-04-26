@@ -8,8 +8,8 @@ This is an example project that uses the 500px api to populate an animated list 
 Technologies
 ------------
 
-The Boring
-----------
+The Necessary
+-------------
 [Logback](http://tony19.github.io/logback-android/)
 
 [JodaTime](http://www.joda.org/joda-time/)
