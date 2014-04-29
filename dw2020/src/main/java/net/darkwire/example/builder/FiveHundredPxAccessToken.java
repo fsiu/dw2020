@@ -1,4 +1,4 @@
-package net.darkwire.example.tasks;
+package net.darkwire.example.builder;
 
 import net.darkwire.example.exception.AuthenticationError;
 import net.darkwire.example.model.FiveHundredPxConfiguration;
@@ -12,7 +12,7 @@ import com.fivehundredpx.api.auth.XAuthProvider;
  */
 public class FiveHundredPxAccessToken {
 
-    public static AccessToken getAccessToken(final FiveHundredPxConfiguration config) throws AuthenticationError {
+    public static AccessToken build(final FiveHundredPxConfiguration config) throws AuthenticationError {
         final AccessToken result;
         try {
             final OAuthAuthorization oauth = new OAuthAuthorization.Builder()
