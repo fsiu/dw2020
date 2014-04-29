@@ -64,9 +64,11 @@ Android Studio
 500px Test console
 ------------------
 * [Test Console](https://apigee.com/vova/embed/console/api500px)
-* See /secrets.properties.sample to change it to your own account.
-* Manually copy /secrets.properties.sample to /src/main/java/profiles/dev/resources/secrets.properties and /src/main/java/profiles/release/resources/secrets.properties
-* This application will purposefully "Force Quit" if you don't have the file.
+* See /dw2020/secrets.properties.sample to create your own secrets.properties file.
+* Copy your secrets.properties to :
+/dw2020/src/main/java/profiles/dev/resources/secrets.properties
+/dw2020/src/main/java/profiles/release/resources/secrets.properties
+
 
 Build Types
 -----------
