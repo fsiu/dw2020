@@ -22,7 +22,7 @@ import net.darkwire.example.exception.AuthenticationError;
 import net.darkwire.example.service.FiveHundredPxJacksonSpiceService;
 import net.darkwire.example.service.FiveHundredPxSearchSpiceRequest;
 import net.darkwire.example.service.FiveHundredPxSpiceRequest;
-import net.darkwire.example.tasks.FiveHundredPxAccessToken;
+import net.darkwire.example.builder.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
@@ -194,7 +194,7 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     private void setupNetworkServices() throws AuthenticationError {
-        final AccessToken accessToken = FiveHundredPxAccessToken.getAccessToken(FiveHundredPxConfiguration.INSTANCE);
+        final AccessToken accessToken = FiveHundredPxAccessToken.build(FiveHundredPxConfiguration.INSTANCE);
         FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
         //final SpiceManager spiceManager = new SpiceManager(FiveHundredPxGsonSpiceService.class);
