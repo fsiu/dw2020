@@ -27,7 +27,7 @@ public class FiveHundredPxSearchSpiceRequest extends FiveHundredPxSpiceRequest<F
 
     @Override
     public Object getCacheKey() {
-        return this.hashCode()+term+tag+page+""+resultPerPage;
+        return this.hashCode()+term+"|"+tag+"|"+page+"|"+resultPerPage;
     }
 
 }
