@@ -1,5 +1,8 @@
 package net.darkwire.example.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FiveHundredPxImageMetadata {
+public class FiveHundredPxImageMetadata implements Parcelable {
     private int size;
     private String url;
 
@@ -40,4 +43,35 @@ public class FiveHundredPxImageMetadata {
     public void setHttpsUrl(String httpsUrl) {
         this.httpsUrl = httpsUrl;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.size);
+        dest.writeString(this.url);
+        dest.writeString(this.httpsUrl);
+    }
+
+    public FiveHundredPxImageMetadata() {
+    }
+
+    private FiveHundredPxImageMetadata(Parcel in) {
+        this.size = in.readInt();
+        this.url = in.readString();
+        this.httpsUrl = in.readString();
+    }
+
+    public static Parcelable.Creator<FiveHundredPxImageMetadata> CREATOR = new Parcelable.Creator<FiveHundredPxImageMetadata>() {
+        public FiveHundredPxImageMetadata createFromParcel(Parcel source) {
+            return new FiveHundredPxImageMetadata(source);
+        }
+
+        public FiveHundredPxImageMetadata[] newArray(int size) {
+            return new FiveHundredPxImageMetadata[size];
+        }
+    };
 }
