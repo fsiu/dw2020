@@ -95,7 +95,7 @@ public class MainActivity extends BaseSpiceActivity {
 
     @Override
     protected void onStop() {
-        super.onPause();
+        super.onStop();
         if(this.disruptor!=null) {
             this.disruptor.shutdown();
         }
