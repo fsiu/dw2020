@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import net.darkwire.example.service.FiveHundredPxSpiceRequest;
 import net.darkwire.example.builder.FiveHundredPxAccessToken;
 import com.fivehundredpx.api.auth.AccessToken;
 
+import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -65,6 +67,8 @@ public class MainActivity extends BaseSpiceActivity {
     TextView debugTextView;
 
     private Bundle bundle;
+    private State loadState;
+    private FiveHundredPxSpiceRequestListener spiceRequestListener = new FiveHundredPxSpiceRequestListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,15 +211,17 @@ public class MainActivity extends BaseSpiceActivity {
         this.listAdapter = new PhotoAdapter(this);
         this.listAdapter.setResultsPerPage(resultsPerPage);
 
+        final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
+        swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
+        swingBottomInAnimationAdapter.setAbsListView(this.listView);
+
         if(this.bundle!=null) {
             this.listAdapter.setCurrentPage(this.bundle.getLong(CURRENT_PAGE));
             this.listAdapter.setMaxPages(this.bundle.getLong(MAX_PAGES));
             final ArrayList<FiveHundredPxPhoto> photos = this.bundle.getParcelableArrayList(LIST_ITEMS);
             this.listAdapter.addAll(photos);
+            swingBottomInAnimationAdapter.setShouldAnimate(false);
         }
-        final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
-        swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
-        swingBottomInAnimationAdapter.setAbsListView(this.listView);
 
         return swingBottomInAnimationAdapter;
     }
@@ -230,6 +236,7 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     public void loadMoreData(final State loadState) {
+        this.loadState = loadState;
         if (State.INITIAL == loadState || this.listAdapter.hasMorePages()) {
             //final FiveHundredPxSpiceRequest request = new FiveHundredPxRecentPhotosSpiceRequest(this.listAdapter.getCurrentPage(), this.listAdapter.getResultsPerPage());
             final FiveHundredPxSpiceRequest request = new FiveHundredPxSearchSpiceRequest(
@@ -238,34 +245,37 @@ public class MainActivity extends BaseSpiceActivity {
                     this.listAdapter.getCurrentPage(),
                     this.listAdapter.getResultsPerPage());
 
-            getSpiceManager(MainActivity.class.getName()).execute(request, request.getCacheKey(), DurationInMillis.ONE_MINUTE, new FiveHundredPxSpiceRequestListener(loadState));
+            getSpiceManager(MainActivity.class.getName()).execute(request,
+                    request.getCacheKey(),
+                    DurationInMillis.ONE_HOUR,
+                    this.spiceRequestListener);
         }
     }
 
     private class FiveHundredPxSpiceRequestListener implements RequestListener<FiveHundredPxPhotoContainer> {
-        final State loadState;
-
-        public FiveHundredPxSpiceRequestListener(final State loadState) {
-            this.loadState = loadState;
-        }
 
         @Override
         public void onRequestFailure(final SpiceException spiceException) {
             LOGGER.error(spiceException.getMessage());
             Toast.makeText(MainActivity.this, getString(R.string.connection_failed), Toast.LENGTH_LONG).show();
-            loadMoreData(loadState);
+            loadMoreData(MainActivity.this.loadState);
         }
 
         @Override
         public void onRequestSuccess(final FiveHundredPxPhotoContainer result) {
-            if (State.INITIAL == this.loadState) {
+            if (State.INITIAL == MainActivity.this.loadState) {
                 hideProgressBar();
             }
             final PhotoAdapter adapter = MainActivity.this.listAdapter;
             adapter.incrementPage();
             adapter.setMaxPages(result.getTotalPages());
             adapter.addAll(result.getPhotos());
+            if(MainActivity.this.bundle!=null) {
+                final AnimationAdapter animationAdapter = (AnimationAdapter) MainActivity.this.listView.getAdapter();
+                animationAdapter.setShouldAnimate(true);
+            }
             adapter.notifyDataSetChanged();
+
         }
     }
 
