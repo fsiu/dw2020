@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.darkwire.example.exception.AuthenticationError;
+import net.darkwire.example.model.FiveHundredPxPhoto;
 import net.darkwire.example.service.FiveHundredPxJacksonSpiceService;
 import net.darkwire.example.service.FiveHundredPxSearchSpiceRequest;
 import net.darkwire.example.service.FiveHundredPxSpiceRequest;
@@ -56,12 +57,32 @@ public class MainActivity extends BaseSpiceActivity {
     @InjectView(R.id.debug_text)
     TextView debugTextView;
 
+    private Bundle bundle;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         startObservables();
+        this.bundle = savedInstanceState;
+    }
+
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(this.listView!=null) {
+            outState.putParcelable("listViewState",this.listView.onSaveInstanceState());
+        }
+        if(this.listAdapter!=null && this.listAdapter.getCount()>0) {
+            outState.putLong("currentPage", listAdapter.getCurrentPage());
+            outState.putLong("maxPages", listAdapter.getMaxPages());
+            final int count = listAdapter.getCount();
+            final FiveHundredPxPhoto [] photos = new FiveHundredPxPhoto[count];
+            for(int i=0;i<count;i++) {
+                photos[i] = listAdapter.getItem(i);
+            }
+            outState.putParcelableArray("photos", photos);
+        }
     }
 
     private Observable<BaseAdapter> getTokenObservable() {
@@ -84,7 +105,14 @@ public class MainActivity extends BaseSpiceActivity {
         return new Action1<BaseAdapter>() {
             @Override
             public void call(final BaseAdapter adapter) {
-                loadMoreData(addAdapterToListView(adapter));
+                final State state = addAdapterToListView(adapter);
+                if(MainActivity.this.bundle!=null) {
+                    MainActivity.this.progressBar.setVisibility(View.GONE);
+                    MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
+                    MainActivity.this.listView.onRestoreInstanceState(MainActivity.this.bundle.getParcelable("listViewState"));
+                } else {
+                    loadMoreData(state);
+                }
             }
         };
     }
@@ -168,6 +196,13 @@ public class MainActivity extends BaseSpiceActivity {
         this.listAdapter = new PhotoAdapter(this);
         this.listAdapter.setResultsPerPage(resultsPerPage);
 
+        if(this.bundle!=null) {
+            this.listAdapter.setCurrentPage(this.bundle.getLong("currentPage"));
+            this.listAdapter.setMaxPages(this.bundle.getLong("maxPages"));
+            final FiveHundredPxPhoto [] photos = (FiveHundredPxPhoto [])this.bundle.getParcelableArray("photos");
+            this.listAdapter.addAll(photos);
+        }
+
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
         swingBottomInAnimationAdapter.setAbsListView(this.listView);
@@ -177,7 +212,11 @@ public class MainActivity extends BaseSpiceActivity {
 
     private State addAdapterToListView(final BaseAdapter adapter) {
         ((AdapterView)this.listView).setAdapter(adapter);
-        return State.INITIAL;
+        if(adapter.getCount()>0) {
+            return State.NEXT;
+        } else {
+            return State.INITIAL;
+        }
     }
 
     public void loadMoreData(final State loadState) {
@@ -216,15 +255,10 @@ public class MainActivity extends BaseSpiceActivity {
             final PhotoAdapter adapter = MainActivity.this.listAdapter;
             adapter.incrementPage();
             adapter.setMaxPages(result.getTotalPages());
-
             adapter.addAll(result.getPhotos());
             adapter.notifyDataSetChanged();
         }
-
     }
-
-
-
 
     private enum State {
         INITIAL, NEXT
