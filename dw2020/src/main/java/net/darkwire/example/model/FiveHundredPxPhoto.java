@@ -70,7 +70,7 @@ public class FiveHundredPxPhoto implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.imageUrl);
         dest.writeString(this.shutterSpeed);
-        dest.writeSerializable(this.images);
+        dest.writeList(images);
     }
 
     public FiveHundredPxPhoto() {
@@ -80,7 +80,7 @@ public class FiveHundredPxPhoto implements Parcelable {
         this.name = in.readString();
         this.imageUrl = in.readString();
         this.shutterSpeed = in.readString();
-        this.images = (ArrayList<FiveHundredPxImageMetadata>) in.readSerializable();
+        this.images = in.readArrayList(FiveHundredPxImageMetadata.class.getClassLoader());
     }
 
     public static Parcelable.Creator<FiveHundredPxPhoto> CREATOR = new Parcelable.Creator<FiveHundredPxPhoto>() {

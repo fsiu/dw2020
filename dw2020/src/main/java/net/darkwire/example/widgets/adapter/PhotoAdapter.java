@@ -18,7 +18,7 @@ import butterknife.InjectView;
 /**
  * Created by fsiu on 3/21/14.
  */
-public class PhotoAdapter extends NumericPaginationArrayAdapter<FiveHundredPxPhoto> {
+public class PhotoAdapter extends NumericPaginationBaseAdapter<FiveHundredPxPhoto> {
 
     public PhotoAdapter(final Context ctx) {
         super(ctx);

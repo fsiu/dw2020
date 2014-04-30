@@ -4,23 +4,30 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by fsiu on 4/19/14.
  */
-public abstract class NumericPaginationArrayAdapter<T> extends ArrayAdapter<T> implements NumericPagination {
+public abstract class NumericPaginationBaseAdapter<T> extends BaseAdapter implements NumericPagination {
     private long currentPage = 1;
     private long maxPages;
     private int resultsPerPage;
 
     final Context ctx;
     final LayoutInflater inflater;
+    final ArrayList<T> list = new ArrayList<T>();
 
-    public NumericPaginationArrayAdapter(Context ctx) {
-        super(ctx, 0);
+    public NumericPaginationBaseAdapter(Context ctx) {
+        super();
         this.ctx = ctx;
         this.inflater = (LayoutInflater) this.ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -83,4 +90,21 @@ public abstract class NumericPaginationArrayAdapter<T> extends ArrayAdapter<T> i
         }
         textView.setText(text);
     }
+
+    public int getCount () {
+        return this.list.size();
+    }
+
+    public T getItem(final int position) {
+        return this.list.get(position);
+    }
+
+    public void addAll(final List<T> addListItems) {
+        this.list.addAll(addListItems);
+    }
+
+    public ArrayList<T> getList() {
+        return new ArrayList<T>(this.list);
+    }
+
 }
