@@ -2,8 +2,6 @@ package net.darkwire.example;
 
 import java.util.HashMap;
 
-import android.app.Activity;
-
 import com.octo.android.robospice.SpiceManager;
 
 /**
