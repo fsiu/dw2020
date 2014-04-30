@@ -57,13 +57,11 @@ public class FiveHundredPxConfiguration {
     }
 
     private FiveHundredPxConfiguration() {
-        final Properties props = new Properties();
-
-        final InputStream inputStream = ((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties");
 
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(inputStream));
+            final Properties props = new Properties();
+            reader = new BufferedReader(new InputStreamReader(((Object) this).getClass().getClassLoader().getResourceAsStream("secrets.properties")));
             props.load(reader);
             setConsumerKey(props.getProperty("px_consumer_key"));
             setConsumerSecret(props.getProperty("px_consumer_secret"));
