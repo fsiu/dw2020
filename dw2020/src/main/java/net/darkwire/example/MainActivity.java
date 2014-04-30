@@ -67,11 +67,16 @@ public class MainActivity extends BaseSpiceActivity {
     private Bundle bundle;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         this.bundle = savedInstanceState;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         startObservables();
     }
 
