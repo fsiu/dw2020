@@ -13,18 +13,24 @@ public enum FiveHundredPxClient {
     INSTANCE;
 
     private RetrofitHttpOAuthConsumer oAuthConsumer;
+    private AccessToken accessToken;
 
     public void setConsumer(final RetrofitHttpOAuthConsumer oAuthConsumer) {
         this.oAuthConsumer = oAuthConsumer;
     }
 
     public void setConsumer(final AccessToken accessToken) {
+        this.accessToken = accessToken;
         final FiveHundredPxConfiguration fiveHundredPxConfiguration = FiveHundredPxConfiguration.INSTANCE;
         final RetrofitHttpOAuthConsumer oAuthConsumer = new RetrofitHttpOAuthConsumer(
                 fiveHundredPxConfiguration.getConsumerKey(),
                 fiveHundredPxConfiguration.getConsumerSecret());
         oAuthConsumer.setTokenWithSecret(accessToken.getToken(), accessToken.getTokenSecret());
         this.oAuthConsumer = oAuthConsumer;
+    }
+
+    public AccessToken getAccessToken() {
+        return this.accessToken;
     }
 
     public SigningOkClient getClient() {

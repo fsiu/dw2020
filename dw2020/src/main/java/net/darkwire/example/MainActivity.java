@@ -19,6 +19,7 @@ import net.darkwire.example.disruptor.handler.FiveHundredPxPhotoContainerHandler
 import net.darkwire.example.disruptor.translator.FiveHundredPxPhotoContainerProducerWithTranslator;
 
 import net.darkwire.example.exception.AuthenticationError;
+import net.darkwire.example.model.FiveHundredPxPhoto;
 import net.darkwire.example.service.FiveHundredPxJacksonSpiceService;
 import net.darkwire.example.service.FiveHundredPxSearchSpiceRequest;
 import net.darkwire.example.service.FiveHundredPxSpiceRequest;
@@ -55,9 +56,15 @@ import net.darkwire.example.service.client.FiveHundredPxClient;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.ArrayList;
 
 public class MainActivity extends BaseSpiceActivity {
 
+    private static final String CURRENT_PAGE = "currentPage";
+    private static final String MAX_PAGES = "maxPages";
+    private static final String LIST_ITEMS = "listItems";
+    private static final String LIST_VIEW_STATE = "listViewState";
+    private static final String ACCESS_TOKEN = "accessToken";
     private final Logger LOGGER = LoggerFactory.getLogger(MainActivity.class);
 
     private PhotoAdapter listAdapter;
@@ -78,13 +85,14 @@ public class MainActivity extends BaseSpiceActivity {
     private State state = State.INITIAL;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-
+        this.bundle = savedInstanceState;
     }
 
     @Override
@@ -99,6 +107,17 @@ public class MainActivity extends BaseSpiceActivity {
         if(this.disruptor!=null) {
             this.disruptor.shutdown();
         }
+    }
+
+    protected void onSaveInstanceState (Bundle outState) {
+        if(this.listAdapter!=null && this.listAdapter.getCount()>0) {
+            outState.putParcelable(LIST_VIEW_STATE,this.listView.onSaveInstanceState());
+            outState.putLong(CURRENT_PAGE, this.listAdapter.getCurrentPage());
+            outState.putLong(MAX_PAGES, this.listAdapter.getMaxPages());
+            outState.putParcelableArrayList(LIST_ITEMS, this.listAdapter.getList());
+        }
+        outState.putParcelable(ACCESS_TOKEN, FiveHundredPxClient.INSTANCE.getAccessToken());
+        super.onSaveInstanceState(outState);
     }
 
     private Observable<BaseAdapter> getTokenObservable() {
@@ -125,6 +144,13 @@ public class MainActivity extends BaseSpiceActivity {
             public void call(final BaseAdapter adapter) {
                 addAdapterToListView(adapter);
                 MainActivity.this.disruptor.start();
+                final State state = addAdapterToListView(adapter);
+                if(adapter.getCount()>0) {
+                    MainActivity.this.listView.onRestoreInstanceState(MainActivity.this.bundle.getParcelable(LIST_VIEW_STATE));
+                    hideProgressBar();
+                } else {
+                    loadMoreData(state);
+                }
             }
         };
     }
@@ -194,7 +220,13 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     private void setupNetworkServices() throws AuthenticationError {
-        final AccessToken accessToken = FiveHundredPxAccessToken.build(FiveHundredPxConfiguration.INSTANCE);
+        AccessToken accessToken = null;
+        if(this.bundle!=null) {
+            accessToken = this.bundle.getParcelable(ACCESS_TOKEN);
+        }
+        if(accessToken==null) {
+            accessToken = FiveHundredPxAccessToken.build(FiveHundredPxConfiguration.INSTANCE);
+        }
         FiveHundredPxClient.INSTANCE.setConsumer(accessToken);
 
         //final SpiceManager spiceManager = new SpiceManager(FiveHundredPxGsonSpiceService.class);
@@ -227,6 +259,12 @@ public class MainActivity extends BaseSpiceActivity {
         this.listAdapter = new PhotoAdapter(this);
         this.listAdapter.setResultsPerPage(resultsPerPage);
 
+        if(this.bundle!=null) {
+            this.listAdapter.setCurrentPage(this.bundle.getLong(CURRENT_PAGE));
+            this.listAdapter.setMaxPages(this.bundle.getLong(MAX_PAGES));
+            final ArrayList<FiveHundredPxPhoto> photos = this.bundle.getParcelableArrayList(LIST_ITEMS);
+            this.listAdapter.addAll(photos);
+        }
         final SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(this.listAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(getResources().getInteger(R.integer.transition_delay_duration_in_millis));
         swingBottomInAnimationAdapter.setAbsListView(this.listView);
@@ -236,7 +274,11 @@ public class MainActivity extends BaseSpiceActivity {
 
     private State addAdapterToListView(final BaseAdapter adapter) {
         ((AdapterView)this.listView).setAdapter(adapter);
-        return State.INITIAL;
+        if(adapter.getCount()>0) {
+            return State.NEXT;
+        } else {
+            return State.INITIAL;
+        }
     }
 
     public void loadMoreData(final State loadState) {
@@ -269,13 +311,16 @@ public class MainActivity extends BaseSpiceActivity {
         @Override
         public void onRequestSuccess(final FiveHundredPxPhotoContainer result) {
             if (State.INITIAL == this.loadState) {
-                MainActivity.this.progressBar.setVisibility(View.GONE);
-                MainActivity.this.debugTextView.setVisibility(View.VISIBLE);
+                hideProgressBar();
                 MainActivity.this.state = State.NEXT;
             }
             MainActivity.this.producer.onData(result);
         }
+    }
 
+    private void hideProgressBar() {
+        this.progressBar.setVisibility(View.GONE);
+        this.debugTextView.setVisibility(View.VISIBLE);
     }
 
     private enum State {
