@@ -29,6 +29,7 @@ public class PhotoAdapter extends NumericPaginationBaseAdapter<FiveHundredPxPhot
         //View layout = R.layout.item
         //FiveHundredPxPhoto.getImageUrl() for the photo url
         //FiveHundredPxPhoto.getName() to setTextView() from the NumericPaginationBaseAdapter
+        //Use Picasso to populate the image
         return convertView;
     }
 
