@@ -1,6 +1,7 @@
 package net.darkwire.example.widgets.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,10 +27,12 @@ public class PhotoAdapter extends NumericPaginationBaseAdapter<FiveHundredPxPhot
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup viewGroup) {
+
         //View layout = R.layout.item
         //FiveHundredPxPhoto.getImageUrl() for the photo url
         //FiveHundredPxPhoto.getName() to setTextView() from the NumericPaginationBaseAdapter
         //Use Picasso to populate the image
+
         return convertView;
     }
 
