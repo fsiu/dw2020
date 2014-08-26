@@ -1,6 +1,7 @@
 package net.darkwire.example.widgets.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ public class PhotoAdapter extends NumericPaginationBaseAdapter<FiveHundredPxPhot
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup viewGroup) {
+        Log.e("getView", "position:"+position);
         PhotoViewHolder viewHolder;
         if(convertView==null){
             convertView = this.inflater.inflate(R.layout.item, viewGroup, false);
