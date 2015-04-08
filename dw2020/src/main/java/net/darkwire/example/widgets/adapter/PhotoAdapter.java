@@ -1,6 +1,7 @@
 package net.darkwire.example.widgets.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class PhotoAdapter extends NumericPaginationBaseAdapter<FiveHundredPxPhot
         final FiveHundredPxPhoto photo = getItem(position);
         Picasso.with(this.ctx)
                 .load(photo.getImageUrl())
+                .config(Bitmap.Config.RGB_565)
                 .into(viewHolder.imageView);
         setViewText(viewHolder.textView, photo.getName());
         return convertView;

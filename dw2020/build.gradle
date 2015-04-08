@@ -31,8 +31,7 @@ android {
             versionNameSuffix "-"+devBuildName.toUpperCase()
         }
         release {
-            zipAlign true
-            runProguard false
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
