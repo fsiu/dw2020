@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,11 +37,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-
+import rx.android.app.AppObservable;
 import net.darkwire.example.model.FiveHundredPxPhotoContainer;
 import net.darkwire.example.service.client.FiveHundredPxClient;
 
@@ -96,7 +94,7 @@ public class MainActivity extends BaseSpiceActivity {
     }
 
     private Observable<BaseAdapter> getTokenObservable() {
-        return AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<BaseAdapter>() {
+        return AppObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<BaseAdapter>() {
             @Override
             public void call(Subscriber<? super BaseAdapter> subscriber) {
                 try {
