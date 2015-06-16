@@ -186,7 +186,7 @@ public class MainActivity extends BaseSpiceActivity {
     public void startObservables() {
         getTokenObservable()
                 .retry(getResources().getInteger(R.integer.max_retries))
-                .subscribeOn(Schedulers.executor(this.executor))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
                 getInitialLoadMoreDataAction(),
                 getRetryDialogAction(
